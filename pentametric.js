@@ -26,7 +26,9 @@ var pentametricSerialOptions = {
 
 // Returns a promise containing the battery 1 volts.
 function getVolt1Reading() {
-	requestData(1,2); // TODO: promise and convert result.
+	requestData(1,2).then(function(data) {
+		console.log(data / 20);
+	});
 }
 
 
@@ -40,7 +42,7 @@ function requestData(address, bitsToGet) {
 		address : address,
 		bitsToGet : bitsToGet,
 		deferred : deferred,
-		receivedData : []
+		receivedData : new Buffer([])
 	});
 	// If this is the only item on the queue.
 	if (processingQueue.length === 1) {
@@ -51,10 +53,11 @@ function requestData(address, bitsToGet) {
 };
 
 function processQueue() {
+	if (processingQueue.length > 0) {
+
 	getDevice().then(function(device) {
-		// Process while there are items in the queue.
-		while (processingQueue.length > 0) {
-			var task = processingQueue[0];
+		// Process while there are items in the queue.	
+		var task = processingQueue[0];
 			
 			console.log("Requesting data at address: " + task.address);
 			console.log("Getting: " + task.bitsToGet + " bits.");
@@ -66,47 +69,44 @@ function processQueue() {
 					task.deferred.reject(error);
 				}
 			});
-
-			// Shift the item off the front of the queue.
-			processingQueue.shift();
-		}
+	});
 	}
 }
 
 // Hander for data received on the serial port.
 function onData(data) {
-	console.log("Got data from serial:");
-    console.log(data);
-
     // If we are expecting some data.
-    if (processingQueue > 0) {
+    if (processingQueue.length > 0) {
     	var task = processingQueue[0];
-    	task.receivedData.push(data);
+	task.receivedData = Buffer.concat([task.receivedData, data]);
 
     	// If we have received the expected number of bits plus a checksum.
     	if (task.receivedData.length === task.bitsToGet + 1) {
-    		console.log('all data received');
-    		console.log(task.receivedData);
+		// Check the checksum.
+		var total = 0;
+		for (var value of task.receivedData.values()) {
+			total += value;	
+		}
+		if (total === 255) {
+			// Convert the data to a number.
+			var result = 0;
+                        for (var i = task.bitsToGet - 1; i >= 0; i--)
+                        {
+                            result <<= 8;
+                            result |= task.receivedData[i];
+                        }
+
+			task.deferred.resolve(result);	
+		} else {
+			task.deferred.reject("An error occured in transmission. Invalid checksum.");
+		}
+		
+		// Move on to the next item.
+		processingQueue.shift();
+		processQueue();	
     	}
     }
 }
-
-// // Makes a request for data at an address, getting a particular number of bits.
-// 	// Returns a promise containing the data received.
-// function readData(address, bitsToGet) {
-// 	getDevice().then(function(device) {
-// 		console.log("Requesting data at address: " + address);
-// 		console.log("Getting: " + bitsToGet + " bits.");
-
-// 		// TODO: Manage a request object.
-// 		// currentRequest = new Promise(function() {
-
-// 		console.log("checksum");
-// 		console.log(checksum);
-
-		
-// 	});
-// }
 
 // Returns a promise containing the open serial device.
 function getDevice() {
