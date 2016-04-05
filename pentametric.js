@@ -39,12 +39,13 @@ function requestData(address, bitsToGet) {
 	processingQueue.push({
 		address : address,
 		bitsToGet : bitsToGet,
-		deferred : deferred
+		deferred : deferred,
+		receivedData : []
 	});
 	// If this is the only item on the queue.
 	if (processingQueue.length === 1) {
 		// Start the queue processing.
-		processingQueue();
+		processQueue();
 	}
 	return deferred.promise;
 };
@@ -76,6 +77,18 @@ function processQueue() {
 function onData(data) {
 	console.log("Got data from serial:");
     console.log(data);
+
+    // If we are expecting some data.
+    if (processingQueue > 0) {
+    	var task = processingQueue[0];
+    	task.receivedData.push(data);
+
+    	// If we have received the expected number of bits plus a checksum.
+    	if (task.receivedData.length === task.bitsToGet + 1) {
+    		console.log('all data received');
+    		console.log(task.receivedData);
+    	}
+    }
 }
 
 // // Makes a request for data at an address, getting a particular number of bits.
