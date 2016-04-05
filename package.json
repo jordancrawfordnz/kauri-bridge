@@ -1,0 +1,21 @@
+{
+  "name": "bridge",
+  "version": "1.0.0",
+  "description": "A bridge client for OffGridMonitoring.",
+  "main": "start.js",
+  "dependencies": {
+    "serialport": "^2.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jordancrawfordnz@bitbucket.org/offgridmonitoring/bridge.git"
+  },
+  "author": "Jordan Crawford",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/offgridmonitoring/bridge#readme"
+}
