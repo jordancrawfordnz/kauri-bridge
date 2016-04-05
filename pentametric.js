@@ -34,8 +34,15 @@ function readData(address, bitsToGet) {
 		// });
 		// TODO: compute checksum
 
+	console.log(device);
+		console.log('about to write.');
 		device.write([0x81, 0x03, 0x02, 0x79]);
-	});
+		//device.write([129,3,2,121], function(error) {
+		//	console.log('error from write');
+		//	console.log(error);
+		//});
+		console.log('wrote to device.');
+		});
 }
 
 // Returns a promise containing the open serial device.
@@ -57,7 +64,7 @@ function getDevice() {
 		                	console.log(data);
 		                });
 
-		                resolve();
+		                resolve(pentametricSerial);
 			        }
 				}
 			);
@@ -66,4 +73,6 @@ function getDevice() {
 	return pentametricSerialPromise;
 }
 
+
 readData();
+setInterval(readData, 5000);
