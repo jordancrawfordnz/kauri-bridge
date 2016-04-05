@@ -11,6 +11,7 @@ var baudRate = 2400;
 var parity = "none";
 var dataBits = 8;
 var timeout = 5;
+var readCommand = 0x81;
 
 var pentametricSerialPromise = null;
 var currentRequest = null;
@@ -22,27 +23,30 @@ var pentametricSerialOptions = {
 	parity: parity
 };
 
+// Returns a promise containing the battery 1 volts.
+function getVolt1Reading() {
+	readData(1,2); // TODO: promise and convert result.
+}
+
 function readData(address, bitsToGet) {
 	getDevice().then(function(device) {
 		console.log("Requesting data at address: " + address);
 		console.log("Getting: " + bitsToGet + " bits.");
 
 		// TODO: Manage a request object.
-
 		// currentRequest = new Promise(function() {
 
-		// });
-		// TODO: compute checksum
+		var checksum = 255 - readCommand - address - bitsToGet;
+		console.log("checksum");
+		console.log(checksum);
 
-	console.log(device);
-		console.log('about to write.');
-		device.write([0x81, 0x03, 0x02, 0x79]);
-		//device.write([129,3,2,121], function(error) {
-		//	console.log('error from write');
-		//	console.log(error);
-		//});
-		console.log('wrote to device.');
+		device.write([readCommand, address, bitsToGet, checksum], function(error) {
+			if (error) {
+				console.log("An error occured while writing to the serial device.");
+				console.log(error);
+			}
 		});
+	});
 }
 
 // Returns a promise containing the open serial device.
@@ -73,6 +77,5 @@ function getDevice() {
 	return pentametricSerialPromise;
 }
 
-
-readData();
-setInterval(readData, 5000);
+getVolt1Reading();
+setInterval(getVolt1Reading, 5000);
