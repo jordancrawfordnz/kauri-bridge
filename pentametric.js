@@ -25,6 +25,13 @@ var Pentametric = function(device) {
 	this.pentametricSerialPromise = null;
 };
 
+// Returns a promise containing the voltage at the address.
+Pentametric.prototype.getVoltageReading = function(id) {
+	return this.requestData(id, 2).then(function(data) {
+		return data / 20;
+	});
+};
+
 // Adds a request to the processing queue.
 	// Returns a promise.
 Pentametric.prototype.requestData = function(address, bytesToGet) {
@@ -50,13 +57,6 @@ Pentametric.prototype.requestData = function(address, bytesToGet) {
 		this.processQueue();
 	}
 	return deferred.promise;
-};
-
-// Returns a promise containing the voltage at the address.
-Pentametric.prototype.getVoltageReading = function(id) {
-	return this.requestData(id, 2).then(function(data) {
-		return data / 20;
-	});
 };
 
 // Process the top task in the queue.
@@ -145,13 +145,4 @@ Pentametric.prototype.openDevice = function() {
 	return this.pentametricSerialPromise;
 }
 
-var pentametric = new Pentametric("/dev/ttyUSB0");
-// Testing:
-function getReadings() {
-	pentametric.getVoltageReading(1).then(function(volt1) {
-		pentametric.getVoltageReading(2).then(function(volt2) {
-			console.log("Volt1: " + volt1.toFixed(2) + ", Volt2: " + volt2.toFixed(2));		});
-	});
-}
-getReadings();
-setInterval(getReadings, 500);
+module.exports = Pentametric;
