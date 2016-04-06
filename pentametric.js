@@ -32,6 +32,20 @@ Pentametric.prototype.getVoltageReading = function(id) {
 	});
 };
 
+Pentametric.prototype.getCurrentReading = function(id) {
+	id -= 4;
+	return this.requestData(id, 2).then(function(data) {
+   		// From Mohammed Alahmari's original code.
+   		var sign = amp1 >> 23;
+    	amp &= 0x7fffff;
+    	if (sign != 0)
+    	{
+        	amp |= 0xff800000;
+    	}
+		return -(amp1) / 1000.0;
+	});	
+};
+
 // Adds a request to the processing queue.
 	// Returns a promise.
 Pentametric.prototype.requestData = function(address, bytesToGet) {
@@ -93,6 +107,7 @@ Pentametric.prototype.onData = function(data) {
 			}
 			if (total === 255) {
 				// Convert the raw data to a number.
+			   		// From Mohammed Alahmari's original code.
 				var result = 0;
                 for (var i = task.bytesToGet - 1; i >= 0; i--) {
                     result <<= 8;
