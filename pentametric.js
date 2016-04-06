@@ -129,10 +129,9 @@ function getDevice() {
 // Testing:
 function getReadings() {
 	getVoltageReading(1).then(function(volt1) {
-		console.log("Volt1: " + volt1);
-	});
-	getVoltageReading(2).then(function(volt2) {
-		console.log("Volt2: " + volt2);
+		getVoltageReading(2).then(function(volt2) {
+			console.log("Volt1: " + volt1 + ", Volt2: " + volt2);		
+		});
 	});
 }
 getReadings();
