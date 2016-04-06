@@ -24,23 +24,22 @@ var pentametricSerialOptions = {
 	parity: parity
 };
 
-// Returns a promise containing the battery 1 volts.
-function getVolt1Reading() {
-	requestData(1,2).then(function(data) {
-		console.log(data / 20);
+// Returns a promise containing the voltage at the address.
+function getVoltageReading(id) {
+	return requestData(id,2).then(function(data) {
+		return data/20;
 	});
 }
-
 
 var processingQueue = [];
 
 // Adds a request to the processing queue.
 	// Returns a promise.
-function requestData(address, bitsToGet) {
+function requestData(address, bytesToGet) {
 	var deferred = Deferred();
 	processingQueue.push({
 		address : address,
-		bitsToGet : bitsToGet,
+		bytesToGet : bytesToGet,
 		deferred : deferred,
 		receivedData : new Buffer([])
 	});
@@ -58,13 +57,9 @@ function processQueue() {
 	getDevice().then(function(device) {
 		// Process while there are items in the queue.	
 		var task = processingQueue[0];
-			
-			console.log("Requesting data at address: " + task.address);
-			console.log("Getting: " + task.bitsToGet + " bits.");
+			var checksum = 255 - readCommand - task.address - task.bytesToGet;
 
-			var checksum = 255 - readCommand - task.address - task.bitsToGet;
-
-			device.write([readCommand, task.address, task.bitsToGet, checksum], function(error) {
+			device.write([readCommand, task.address, task.bytesToGet, checksum], function(error) {
 				if (error) {
 					task.deferred.reject(error);
 				}
@@ -78,32 +73,31 @@ function onData(data) {
     // If we are expecting some data.
     if (processingQueue.length > 0) {
     	var task = processingQueue[0];
-	task.receivedData = Buffer.concat([task.receivedData, data]);
+		task.receivedData = Buffer.concat([task.receivedData, data]);
 
     	// If we have received the expected number of bits plus a checksum.
-    	if (task.receivedData.length === task.bitsToGet + 1) {
-		// Check the checksum.
-		var total = 0;
-		for (var value of task.receivedData.values()) {
-			total += value;	
-		}
-		if (total === 255) {
-			// Convert the data to a number.
-			var result = 0;
-                        for (var i = task.bitsToGet - 1; i >= 0; i--)
-                        {
-                            result <<= 8;
-                            result |= task.receivedData[i];
-                        }
+    	if (task.receivedData.length === task.bytesToGet + 1) {
+			// Check the checksum.
+			var total = 0;
+			for (var value of task.receivedData.values()) {
+				total += value;	
+			}
+			if (total === 255) {
+				// Convert the raw data to a number.
+				var result = 0;
+                for (var i = task.bytesToGet - 1; i >= 0; i--) {
+                    result <<= 8;
+                    result |= task.receivedData[i];
+                }
 
-			task.deferred.resolve(result);	
-		} else {
-			task.deferred.reject("An error occured in transmission. Invalid checksum.");
-		}
-		
-		// Move on to the next item.
-		processingQueue.shift();
-		processQueue();	
+				task.deferred.resolve(result);
+			} else {
+				task.deferred.reject("An error occured in transmission. Invalid checksum.");
+			}
+			
+			// Move on to the next item.
+			processingQueue.shift();
+			processQueue();	
     	}
     }
 }
@@ -133,5 +127,13 @@ function getDevice() {
 }
 
 // Testing:
-getVolt1Reading();
-setInterval(getVolt1Reading, 5000);
+function getReadings() {
+	getVoltageReading(1).then(function(volt1) {
+		console.log("Volt1: " + volt1);
+	});
+	getVoltageReading(2).then(function(volt2) {
+		console.log("Volt2: " + volt2);
+	});
+}
+getReadings();
+setInterval(getReadings, 500);
