@@ -13,6 +13,7 @@ var parity = "none";
 var dataBits = 8;
 var timeout = 5;
 var readCommand = 0x81;
+var requestTimeout = 500;
 
 var pentametricSerialPromise = null;
 var currentRequest = null;
@@ -37,12 +38,20 @@ var processingQueue = [];
 	// Returns a promise.
 function requestData(address, bytesToGet) {
 	var deferred = Deferred();
-	processingQueue.push({
+	var request = {
 		address : address,
 		bytesToGet : bytesToGet,
 		deferred : deferred,
 		receivedData : new Buffer([])
-	});
+	};
+	processingQueue.push(request);
+	request.timeout = setTimeout(function() {
+		var index = processingQueue.indexOf(request);
+		if (index !== -1) { // if the request is still around.
+			processingQueue.splice(index, 1); // remove the request from the queue.
+		}
+	}, requestTimeout);
+
 	// If this is the only item on the queue.
 	if (processingQueue.length === 1) {
 		// Start the queue processing.
@@ -94,6 +103,8 @@ function onData(data) {
 			} else {
 				task.deferred.reject("An error occured in transmission. Invalid checksum.");
 			}
+
+			clearTimeout(task.timeout); // no need to auto-expire now.
 			
 			// Move on to the next item.
 			processingQueue.shift();
@@ -130,8 +141,7 @@ function getDevice() {
 function getReadings() {
 	getVoltageReading(1).then(function(volt1) {
 		getVoltageReading(2).then(function(volt2) {
-			console.log("Volt1: " + volt1 + ", Volt2: " + volt2);		
-		});
+			console.log("Volt1: " + volt1.toFixed(2) + ", Volt2: " + volt2.toFixed(2));		});
 	});
 }
 getReadings();
