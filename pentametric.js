@@ -1,13 +1,10 @@
 'use strict';
 
-console.log("Bogart Engineering Pentametric driver loaded.");
-
 var SerialPort = require('serialport')
 var SerialPortObject = SerialPort.SerialPort;
 var Promise = require('promise');
 var Deferred = require('deferred')
 
-var device = "/dev/ttyUSB0";
 var baudRate = 2400;
 var parity = "none";
 var dataBits = 8;
@@ -15,28 +12,22 @@ var timeout = 5;
 var readCommand = 0x81;
 var requestTimeout = 500;
 
-var pentametricSerialPromise = null;
-var currentRequest = null;
-
 // Setup an object for the serial port.
 var pentametricSerialOptions = {
 	baudRate : baudRate,
 	dataBits : dataBits,
-	parity: parity
+	parity : parity
 };
 
-// Returns a promise containing the voltage at the address.
-function getVoltageReading(id) {
-	return requestData(id,2).then(function(data) {
-		return data/20;
-	});
-}
-
-var processingQueue = [];
+var Pentametric = function(device) {
+	this.device = device;
+	this.processingQueue = [];
+	this.pentametricSerialPromise = null;
+};
 
 // Adds a request to the processing queue.
 	// Returns a promise.
-function requestData(address, bytesToGet) {
+Pentametric.prototype.requestData = function(address, bytesToGet) {
 	var deferred = Deferred();
 	var request = {
 		address : address,
@@ -44,43 +35,53 @@ function requestData(address, bytesToGet) {
 		deferred : deferred,
 		receivedData : new Buffer([])
 	};
-	processingQueue.push(request);
+	this.processingQueue.push(request);
+	var _this = this;
 	request.timeout = setTimeout(function() {
-		var index = processingQueue.indexOf(request);
+		var index = _this.processingQueue.indexOf(request);
 		if (index !== -1) { // if the request is still around.
-			processingQueue.splice(index, 1); // remove the request from the queue.
+			_this.processingQueue.splice(index, 1); // remove the request from the queue.
 		}
 	}, requestTimeout);
 
 	// If this is the only item on the queue.
-	if (processingQueue.length === 1) {
+	if (this.processingQueue.length === 1) {
 		// Start the queue processing.
-		processQueue();
+		this.processQueue();
 	}
 	return deferred.promise;
 };
 
-function processQueue() {
-	if (processingQueue.length > 0) {
-	getDevice().then(function(device) {
-		// Process while there are items in the queue.	
-		var task = processingQueue[0];
-			var checksum = 255 - readCommand - task.address - task.bytesToGet;
-
-			device.write([readCommand, task.address, task.bytesToGet, checksum], function(error) {
-				if (error) {
-					task.deferred.reject(error);
-				}
-			});
+// Returns a promise containing the voltage at the address.
+Pentametric.prototype.getVoltageReading = function(id) {
+	return this.requestData(id, 2).then(function(data) {
+		return data / 20;
 	});
+};
+
+// Process the top task in the queue.
+Pentametric.prototype.processQueue = function() {
+	if (this.processingQueue.length > 0) {
+		var _this = this;
+		this.openDevice().then(function(connection) {
+			// Process while there are items in the queue.	
+			var task = _this.processingQueue[0];
+				var checksum = 255 - readCommand - task.address - task.bytesToGet;
+
+				connection.write([readCommand, task.address, task.bytesToGet, checksum], function(error) {
+					if (error) {
+						task.deferred.reject(error);
+					}
+				});
+		});
 	}
-}
+};
 
 // Hander for data received on the serial port.
-function onData(data) {
+Pentametric.prototype.onData = function(data) {
     // If we are expecting some data.
-    if (processingQueue.length > 0) {
-    	var task = processingQueue[0];
+    if (this.processingQueue.length > 0) {
+    	var task = this.processingQueue[0];
 		task.receivedData = Buffer.concat([task.receivedData, data]);
 
     	// If we have received the expected number of bits plus a checksum.
@@ -106,45 +107,49 @@ function onData(data) {
 			clearTimeout(task.timeout); // no need to auto-expire now.
 			
 			// Move on to the next item.
-			processingQueue.shift();
-			processQueue();	
+			this.processingQueue.shift();
+			this.processQueue();	
     	}
     }
 }
 
 // Returns a promise containing the open serial device.
-function getDevice() {
-	if (!pentametricSerialPromise) {
-		pentametricSerialPromise = new Promise(function(resolve, reject) {
-			var pentametricSerial = new SerialPortObject(device,
+Pentametric.prototype.openDevice = function() {
+	if (!this.pentametricSerialPromise) {
+		var _this = this;
+		this.pentametricSerialPromise = new Promise(function(resolve, reject) {
+			var pentametricSerial = new SerialPortObject(_this.device,
 				pentametricSerialOptions,
 				true,
 				function(error) {
 			        if (error) {
 		                console.log("Error opening Pentametric device.");
 		                console.log(error);
+		                _this.pentametricSerialPromise = null; // allow re-trying for a connection after a failure.
 		                reject(error);
-				pentametricSerialPromise = null; // allow re-trying for a connection.
 			        } else {
 			        	console.log("Opened Pentametric device successfully.");
 		                pentametricSerial.on("data", onData); // handle incoming data with the onData function.
+
+		                // On close, require the connection to be opened again.
 		                pentametricSerial.on("close", function() {
-					pentametricSerialPromise = null;
-					console.log("Serial device closed!");
-				});
-				resolve(pentametricSerial);
+							_this.pentametricSerialPromise = null;
+							console.log("Serial device closed!");
+						});
+						resolve(pentametricSerial);
 			        }
 				}
 			);
 		});
 	}
-	return pentametricSerialPromise;
+	return this.pentametricSerialPromise;
 }
 
+var pentametric = new Pentametric("/dev/ttyUSB0");
 // Testing:
 function getReadings() {
-	getVoltageReading(1).then(function(volt1) {
-		getVoltageReading(2).then(function(volt2) {
+	pentametric.getVoltageReading(1).then(function(volt1) {
+		pentametric.getVoltageReading(2).then(function(volt2) {
 			console.log("Volt1: " + volt1.toFixed(2) + ", Volt2: " + volt2.toFixed(2));		});
 	});
 }
