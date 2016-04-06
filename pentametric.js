@@ -62,7 +62,6 @@ function requestData(address, bytesToGet) {
 
 function processQueue() {
 	if (processingQueue.length > 0) {
-
 	getDevice().then(function(device) {
 		// Process while there are items in the queue.	
 		var task = processingQueue[0];
@@ -125,10 +124,15 @@ function getDevice() {
 		                console.log("Error opening Pentametric device.");
 		                console.log(error);
 		                reject(error);
+				pentametricSerialPromise = null; // allow re-trying for a connection.
 			        } else {
 			        	console.log("Opened Pentametric device successfully.");
 		                pentametricSerial.on("data", onData); // handle incoming data with the onData function.
-		                resolve(pentametricSerial);
+		                pentametricSerial.on("close", function() {
+					pentametricSerialPromise = null;
+					console.log("Serial device closed!");
+				});
+				resolve(pentametricSerial);
 			        }
 				}
 			);
