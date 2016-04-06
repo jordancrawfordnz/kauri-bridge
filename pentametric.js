@@ -129,7 +129,11 @@ Pentametric.prototype.openDevice = function() {
 		                reject(error);
 			        } else {
 			        	console.log("Opened Pentametric device successfully.");
-		                pentametricSerial.on("data", onData); // handle incoming data with the onData function.
+		                
+		                // handle incoming data with the onData function.
+		                pentametricSerial.on("data", function(data) {
+		                	_this.onData(data);
+		                });
 
 		                // On close, require the connection to be opened again.
 		                pentametricSerial.on("close", function() {
