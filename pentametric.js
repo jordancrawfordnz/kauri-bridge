@@ -77,7 +77,7 @@ Pentametric.prototype.requestData = function(address, bytesToGet) {
 Pentametric.prototype.processQueue = function() {
 	if (this.processingQueue.length > 0) {
 		var _this = this;
-		this.openDevice().then(function(connection) {
+		this.getConnection().then(function(connection) {
 			// Process while there are items in the queue.	
 			var task = _this.processingQueue[0];
 				var checksum = 255 - readCommand - task.address - task.bytesToGet;
@@ -129,7 +129,7 @@ Pentametric.prototype.onData = function(data) {
 }
 
 // Returns a promise containing the open serial device.
-Pentametric.prototype.openDevice = function() {
+Pentametric.prototype.getConnection = function() {
 	if (!this.pentametricSerialPromise) {
 		var _this = this;
 		this.pentametricSerialPromise = new Promise(function(resolve, reject) {

@@ -7,7 +7,14 @@ var smartCircuitDevice = new SmartCircuit("/dev/tty.usbserial-A1017BDG");
 // Opens a SmartCircuit device and starts outputting readings.
 
 function getReadings() {
-	smartCircuitDevice.openDevice();
+	smartCircuitDevice.getConnection(function(connection) {
+		console.log('connection opened');
+	});
+
+	smartCircuitDevice.clearMemory();
+	setTimeout(function() {
+		smartCircuitDevice.getMemory();
+	}, 8000);
 	// pentametricDevice.getVoltageReading(1).then(function(volt1) {
 	// 	pentametricDevice.getVoltageReading(2).then(function(volt2) {
 	// 		pentametricDevice.getCurrentReading(1).then(function(amp1) {
@@ -23,4 +30,4 @@ function getReadings() {
 	// });
 }
 getReadings();
-setInterval(getReadings, 500);
+// setInterval(getReadings, 500);
