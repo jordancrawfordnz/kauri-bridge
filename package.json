@@ -4,6 +4,7 @@
   "description": "A bridge client for OffGridMonitoring.",
   "main": "start.js",
   "dependencies": {
+    "dateformat": "^1.0.12",
     "deferred": "^0.7.5",
     "promise": "^7.1.1",
     "serialport": "^2.0.6"

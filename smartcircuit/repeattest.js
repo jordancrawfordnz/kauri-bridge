@@ -1,12 +1,19 @@
 'use strict';
 
+var dateFormat = require('dateformat')
+
 if (!process.argv[2]) {
-	console.log("node repeattest.js [device]");
+	console.log("node repeattest.js [device] [keep trying, default: false]");
 	process.exit();
 }
 
 var SmartCircuit = require('./interaction.js');
 var smartCircuitDevice = new SmartCircuit(process.argv[2]);
+var keepTrying = process.argv[3];
+
+function tsLog(message) {
+	console.log(dateFormat(new Date(), "isoDateTime") + ": " + message);
+}
 
 // Does a repeated test of the SmartCircuit device.
 function repeatedTest() {
@@ -14,17 +21,33 @@ function repeatedTest() {
 		smartCircuitDevice.clearMemory().then(function() {
 			setTimeout(function() {
 				smartCircuitDevice.getMemory().then(function(data) {
-					console.log(data);
+					if (data.length === 0) {
+						tsLog("No readings.");
+					} else {
+						var totalReadings = data.length;
+						var last = data[data.length - 1];
+						tsLog("Total readings: " + totalReadings + 
+						", power: " + last.power + "W, voltage: " +
+						last.voltage + "V, current: " + last.current +
+						"A, power factor: " + last.powerFactor +
+						", frequency: " + last.frequency + " Hz.");
+					}
 				}, function(error) {
-					console.log("Got error while trying to get memory.");
-					console.log(error);
-					process.exit();
+					tsLog("Got error while trying to get memory.");
+					tsLog(error);
+
+					if (!keepTrying) {
+						process.exit();	
+					}
 				});
-			}, 3*1000);
+			}, 2*1000);
 		}, function(error) {
-			console.log("Got error while trying to clear memory.");
-			console.log(error);
-			process.exit();
+			tsLog("Got error while trying to clear memory.");
+			tsLog(error);
+
+			if (!keepTrying) {
+				process.exit();	
+			}
 		});
 	};
 

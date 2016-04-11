@@ -68,7 +68,9 @@ SmartCircuit.prototype.getMemory = function() {
 		var data = data.toString();
 		var commaSplit = data.split(',');
 		
-		console.log(commaSplit);
+		if (!request.records) {
+			request.records = [];
+		}
 		switch (commaSplit[0]) {
 			case "#n":
 				var lastPart = commaSplit[commaSplit.length - 1];
@@ -81,9 +83,7 @@ SmartCircuit.prototype.getMemory = function() {
 					request.deferred.reject("Expected a header with the number of records.");
 					break;
 				}
-				if (!request.records) {
-					request.records = [];
-				}
+				
 				// Organise raw data.
 					// From Mohammed Alahmari's original code.
 				var record = {
@@ -96,11 +96,7 @@ SmartCircuit.prototype.getMemory = function() {
 				request.records.push(record);
 				break;
 			case "#l":
-				if (!request.records) {
-					request.deferred.reject("Expected some records.");
-					break;
-				}
-				if (request.numberOfRecords && request.records.length === request.numberOfRecords) {
+				if (request.numberOfRecords !== undefined && request.records.length === request.numberOfRecords) {
 					request.deferred.resolve(request.records);
 					// Successful end, respond with the records.
 				} else {

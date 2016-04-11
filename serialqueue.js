@@ -28,6 +28,9 @@ SerialQueue.prototype.add = function(request, autoExpireTimeout) {
 			var index = _this.processingQueue.indexOf(request);
 			if (index !== -1) { // if the request is still around.
 				_this.processingQueue.splice(index, 1); // remove the request from the queue.
+				if (request.deferred) {
+					request.deferred.reject("Request timeout.");
+				}
 			}
 		}, autoExpireTimeout);
 	}
