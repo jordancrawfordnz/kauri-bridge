@@ -27,6 +27,8 @@ var SmartCircuit = function(device) {
 	this.serialQueue = new SerialQueue(function(request) {
 		_this.getConnection().then(function(connection) {
 			connection.write(request.command);
+		}, function(error) {
+			request.deferred.reject(error); // reject the request due to the connection error.
 		});
 	});
 };
