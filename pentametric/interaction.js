@@ -21,8 +21,22 @@ var pentametricSerialOptions = {
 
 var Pentametric = function(device) {
 	this.device = device;
-	this.processingQueue = [];
 	this.pentametricSerialPromise = null;
+	var _this = this;
+	this.serialQueue = new SerialQueue(function(request) {
+		_this.getConnection().then(function(connection) {
+			// Process while there are items in the queue.	
+			var checksum = 255 - readCommand - request.address - request.bytesToGet;
+
+			connection.write([readCommand, request.address, request.bytesToGet, checksum], function(error) {
+				if (error) { // Reject the request if an error occurs writing to the serial port.
+					task.deferred.reject(error);
+				}
+			});
+		}, function(error) {
+			request.deferred.reject(error); // reject the request due to the connection error.
+		});
+	});
 };
 
 // Returns a promise containing the voltage at the address.
@@ -48,82 +62,46 @@ Pentametric.prototype.getCurrentReading = function(id) {
 
 // Adds a request to the processing queue.
 	// Returns a promise.
-Pentametric.prototype.requestData = function(address, bytesToGet) {
+Pentametric.prototype.queueCommand = function(address, bytesToGet) {
 	var deferred = Deferred();
-	var request = {
+	this.serialQueue.add({
 		address : address,
 		bytesToGet : bytesToGet,
 		deferred : deferred,
 		receivedData : new Buffer([])
-	};
-	this.processingQueue.push(request);
-	var _this = this;
-	request.timeout = setTimeout(function() {
-		var index = _this.processingQueue.indexOf(request);
-		if (index !== -1) { // if the request is still around.
-			_this.processingQueue.splice(index, 1); // remove the request from the queue.
-		}
 	}, requestTimeout);
 
-	// If this is the only item on the queue.
-	if (this.processingQueue.length === 1) {
-		// Start the queue processing.
-		this.processQueue();
-	}
 	return deferred.promise;
-};
-
-// Process the top task in the queue.
-Pentametric.prototype.processQueue = function() {
-	if (this.processingQueue.length > 0) {
-		var _this = this;
-		this.getConnection().then(function(connection) {
-			// Process while there are items in the queue.	
-			var task = _this.processingQueue[0];
-				var checksum = 255 - readCommand - task.address - task.bytesToGet;
-
-				connection.write([readCommand, task.address, task.bytesToGet, checksum], function(error) {
-					if (error) {
-						task.deferred.reject(error);
-					}
-				});
-		});
-	}
 };
 
 // Hander for data received on the serial port.
 Pentametric.prototype.onData = function(data) {
-    // If we are expecting some data.
-    if (this.processingQueue.length > 0) {
-    	var task = this.processingQueue[0];
-		task.receivedData = Buffer.concat([task.receivedData, data]);
+    var current = this.serialQueue.current();
+    if (current) { // if expecting some data
+    	current.receivedData = Buffer.concat([current.receivedData, data]);
 
     	// If we have received the expected number of bits plus a checksum.
-    	if (task.receivedData.length === task.bytesToGet + 1) {
+    	if (current.receivedData.length === current.bytesToGet + 1) {
 			// Check the checksum.
 			var total = 0;
-			for (var value of task.receivedData.values()) {
+			for (var value of current.receivedData.values()) {
 				total += value;	
 			}
 			if (total === 255) {
 				// Convert the raw data to a number.
 			   		// From Mohammed Alahmari's original code.
 				var result = 0;
-                for (var i = task.bytesToGet - 1; i >= 0; i--) {
+                for (var i = current.bytesToGet - 1; i >= 0; i--) {
                     result <<= 8;
-                    result |= task.receivedData[i];
+                    result |= current.receivedData[i];
                 }
 
-				task.deferred.resolve(result);
+				current.deferred.resolve(result);
 			} else {
-				task.deferred.reject("An error occured in transmission. Invalid checksum.");
+				current.deferred.reject("An error occured in transmission. Invalid checksum.");
 			}
 
-			clearTimeout(task.timeout); // no need to auto-expire now.
-			
-			// Move on to the next item.
-			this.processingQueue.shift();
-			this.processQueue();	
+			this.serialQueue.next();
     	}
     }
 }

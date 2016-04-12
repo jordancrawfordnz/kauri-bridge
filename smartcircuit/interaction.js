@@ -12,7 +12,7 @@ var dataBits = 8;
 var requestTimeout = 2000;
 
 // Setup an object for the serial port.
-var pentametricSerialOptions = {
+var smartCircuitSerialOptions = {
 	baudRate : baudRate,
 	dataBits : dataBits,
 	parity : parity,
@@ -21,12 +21,15 @@ var pentametricSerialOptions = {
 
 var SmartCircuit = function(device) {
 	this.device = device;
-	this.processingQueue = [];
 	this.smartCircuitSerialPromise = null;
 	var _this = this;
 	this.serialQueue = new SerialQueue(function(request) {
 		_this.getConnection().then(function(connection) {
-			connection.write(request.command);
+			connection.write(request.command, function(error) {
+				if (error) { // Reject the request if an error occurs writing to the serial port.
+					task.deferred.reject(error);
+				}
+			});
 		}, function(error) {
 			request.deferred.reject(error); // reject the request due to the connection error.
 		});
@@ -117,7 +120,7 @@ SmartCircuit.prototype.getConnection = function() {
 		var _this = this;
 		this.smartCircuitSerialPromise = new Promise(function(resolve, reject) {
 			var pentametricSerial = new SerialPortObject(_this.device,
-				pentametricSerialOptions,
+				smartCircuitSerialOptions,
 				true,
 				function(error) {
 			        if (error) {
