@@ -4,6 +4,7 @@ var SerialPort = require('serialport')
 var SerialPortObject = SerialPort.SerialPort;
 var Promise = require('promise');
 var Deferred = require('deferred')
+var SerialQueue = require('../serialqueue.js');
 
 var baudRate = 2400;
 var parity = "none";
@@ -41,22 +42,22 @@ var Pentametric = function(device) {
 
 // Returns a promise containing the voltage at the address.
 Pentametric.prototype.getVoltageReading = function(id) {
-	return this.requestData(id, 2).then(function(data) {
+	return this.queueCommand(id, 2).then(function(data) {
 		return data / 20;
 	});
 };
 
 Pentametric.prototype.getCurrentReading = function(id) {
 	id -= 4;
-	return this.requestData(id, 2).then(function(data) {
+	return this.queueCommand(id, 2).then(function(data) {
    		// From Mohammed Alahmari's original code.
-   		var sign = amp1 >> 23;
-    	amp &= 0x7fffff;
+   		var sign = data >> 23;
+    	data &= 0x7fffff;
     	if (sign != 0)
     	{
-        	amp |= 0xff800000;
+        	data |= 0xff800000;
     	}
-		return -(amp1) / 1000.0;
+		return -(data) / 1000.0;
 	});	
 };
 

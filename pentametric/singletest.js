@@ -10,6 +10,8 @@ var test = require('./test.js');
 var pentametricDevice = new Pentametric(process.argv[2]);
 
 test.singleTest(pentametricDevice).then(function() {
-	console.log('done');
 	process.exit();
+}, function(error) {
+	console.log("An error occured.");
+	console.log(error);
 });
