@@ -48,8 +48,8 @@ Pentametric.prototype.getVoltageReading = function(id) {
 };
 
 Pentametric.prototype.getCurrentReading = function(id) {
-	id -= 4;
-	return this.queueCommand(id, 2).then(function(data) {
+	id += 4;
+	return this.queueCommand(id, 3).then(function(data) {
    		// From Mohammed Alahmari's original code.
    		var sign = data >> 23;
     	data &= 0x7fffff;
@@ -88,7 +88,7 @@ Pentametric.prototype.onData = function(data) {
 			for (var value of current.receivedData.values()) {
 				total += value;	
 			}
-			if (total === 255) {
+			if (total &= 0xFF === 0xFF) {
 				// Convert the raw data to a number.
 			   		// From Mohammed Alahmari's original code.
 				var result = 0;
