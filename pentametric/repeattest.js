@@ -18,7 +18,7 @@ function tsLog(message) {
 
 // Does a repeated test of the Pentametric device.
 function repeatedTest() {
-	var test = function() {
+	var runTest = function() {
 		test.singleTest(pentametricDevice).then(function(allData) {
 			tsLog(test.dataToString(allData));
 		}, function(error) {
@@ -30,8 +30,8 @@ function repeatedTest() {
 		});
 	};
 
-	test();
-	setInterval(test, 4*1000);
+	runTest();
+	setInterval(runTest, 1*1000);
 }
 
 repeatedTest();
