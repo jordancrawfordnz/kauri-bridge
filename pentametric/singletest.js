@@ -5,7 +5,7 @@ if (!process.argv[2]) {
 	process.exit();
 }
 
-var Pentametric = require('./interaction.js');
+var Pentametric = require('./driver.js');
 var test = require('./test.js');
 var pentametricDevice = new Pentametric(process.argv[2]);
 

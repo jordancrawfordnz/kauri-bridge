@@ -7,7 +7,7 @@ if (!process.argv[2]) {
 	process.exit();
 }
 
-var SmartCircuit = require('./interaction.js');
+var SmartCircuit = require('./driver.js');
 var smartCircuitDevice = new SmartCircuit(process.argv[2]);
 var keepTrying = process.argv[3];
 

@@ -6,6 +6,7 @@
   "dependencies": {
     "dateformat": "^1.0.12",
     "deferred": "^0.7.5",
+    "jsonfile": "^2.2.3",
     "promise": "^7.1.1",
     "serialport": "^2.0.6"
   },

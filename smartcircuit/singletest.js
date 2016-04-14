@@ -5,7 +5,7 @@ if (!process.argv[2]) {
 	process.exit();
 }
 
-var SmartCircuit = require('./interaction.js');
+var SmartCircuit = require('./driver.js');
 var smartCircuitDevice = new SmartCircuit(process.argv[2]);
 
 // Outputs data received from the memory of the SmartCircuit and exits.
