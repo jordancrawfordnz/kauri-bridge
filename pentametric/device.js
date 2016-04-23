@@ -11,9 +11,6 @@ var PentametricDevice = function(configuration, sendSensorData, logContext) {
 	this.configuration = configuration;
 	this.sendSensorData = sendSensorData;
 	this.logContext = logContext;
-
-	console.log(configuration);
-
 	this.driver = new PentametricDriver(configuration.devicePath, logContext.descend('Driver'));
 };
 
