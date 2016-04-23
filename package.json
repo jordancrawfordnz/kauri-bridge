@@ -10,7 +10,8 @@
     "jsonfile": "^2.2.3",
     "promise": "^7.1.1",
     "request": "^2.72.0",
-    "serialport": "^2.0.6"
+    "serialport": "^2.0.6",
+    "ssl-root-cas": "^1.1.10"
   },
   "devDependencies": {},
   "scripts": {

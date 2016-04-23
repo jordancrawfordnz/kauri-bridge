@@ -6,6 +6,12 @@ var colors = require('colors/safe');
 var DeviceObjects = require('./deviceobjects.js');
 var APIInteraction = require('./apiinteraction.js');
 
+// This will add the well-known CAs
+// to `https.globalAgent.options.ca`
+require('ssl-root-cas/latest')
+  .inject()
+  .addFile('sca.server3.crt');
+
 console.log(colors.green('Off Grid Monitoring') + ': Bridge');
 console.log(colors.dim('Jordan Crawford, 2016'));
 
