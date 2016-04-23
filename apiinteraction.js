@@ -14,10 +14,9 @@ var APIInteraction = function(configuration, logContext) {
 
 // Sends sensor data to the API.
 	// TODO: queue requests up then send.
-	APIInteraction.prototype.sendSensorData = function(sensorId, sensorValue) {
+APIInteraction.prototype.sendSensorData = function(sensorId, sensorValue) {
 	var _this = this;
-	this.logContext.log('Got sensor data back. id: ' + sensorId + ', value: ' + sensorValue);
-
+	
 	var timestamp = dateFormat(new Date(), 'isoDateTime');
 	var url = this.configuration.apiEndpoint + '/Readings';
 	var data = {
@@ -32,13 +31,14 @@ var APIInteraction = function(configuration, logContext) {
 	   { 'cache-control': 'no-cache',
 	     'content-type': 'application/json' },
 	  body: data, 
-	  json: true };
+	  json: true
+	};
 
 	request(options, function (error, response, body) {
-	  if (error) {
-	  	_this.logContext.log('Error while posting data.');
-		_this.logContext.log(error);
-	  }
+  		if (error) {
+  			_this.logContext.log('Error while posting data.');
+			_this.logContext.log(error);
+  		}
 	});
 };
 
