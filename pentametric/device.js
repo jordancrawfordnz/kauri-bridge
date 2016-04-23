@@ -24,7 +24,6 @@ PentametricDevice.prototype.start = function() {
 
 		var sensors = _this.configuration.sensors;
 		sensors.forEach(function(sensor) {
-			console.log(sensor);
 			if (sensor.sensorType === 'voltage') {
 				_this.driver.getVoltageReading(sensor.sensorNumber).then(function(reading) {
 					_this.sendSensorData(sensor.id, reading);

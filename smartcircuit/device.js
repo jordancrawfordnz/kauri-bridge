@@ -20,16 +20,19 @@ SmartCircuitDevice.prototype.start = function() {
 	}
 	var _this = this;
 	this.interval = setInterval(function() {
-		_this.logContext.log('Collect data.');
+		_this.logContext.log('Clearing memory.');
 
-		_this.driver.clearMemory(function() {
+		_this.driver.clearMemory().then(function() {
 			// Wait two seconds for a reading to happen.
+			_this.logContext.log('Memory cleared. Waiting for data.');
 			setTimeout(function() {
-				_this.driver.getMemory(function(readings) {
+				_this.logContext.log('Getting memory.');
+				_this.driver.getMemory().then(function(readings) {
 					if (readings.length === 0) {
 						_this.logContext.log('Got no readings.');
 						return;
 					}
+					_this.logContext.log(readings.length + ' readings received.');
 
 					// Use the latest reading.
 					var latestReading = readings[readings.length - 1];
