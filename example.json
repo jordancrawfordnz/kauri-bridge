@@ -1,0 +1,44 @@
+{
+	"name" : "Example Configuration",
+	"apiCommunication" : {
+		"apiEndpoint" : "https://engmon.cms.waikato.ac.nz/api",
+		"bridgeId" : "12345",
+		"bridgeSecret" : "mysecret"
+	},
+	"devices" : [
+		{
+			"name" : "DC monitor",
+			"type" : "pentametric",
+			"pollFrequency" : 10,
+			"devicePath" : "/dev/serial/by-path/pci-0000:00:1d.0-usb-0:1.3:1.0-port0",
+			"sensors" : [
+				{
+					"id" : "1234",
+					"sensorType" : "voltage",
+					"sensorNumber" : 1
+				},
+				{
+					"id" : "1234",
+					"sensorType" : "current",
+					"sensorNumber" : 2
+				}
+			]
+		},
+		{
+			"name" : "AC monitor",
+			"type" : "smartcircuit",
+			"pollFrequency" : 10,
+			"devicePath" : "/dev/serial/by-path/pci-0000:05:00.0-usb-0:2:1.0-port0",
+			"sensors" : [
+				{
+					"id" : "1234",
+					"sensorKey" : "voltage"
+				},
+				{
+					"id" : "1234",
+					"sensorKey" : "power"
+				}
+			]
+		}
+	]
+}

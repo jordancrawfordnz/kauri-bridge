@@ -4,6 +4,7 @@
   "description": "A bridge client for OffGridMonitoring.",
   "main": "start.js",
   "dependencies": {
+    "colors": "^1.1.2",
     "dateformat": "^1.0.12",
     "deferred": "^0.7.5",
     "jsonfile": "^2.2.3",

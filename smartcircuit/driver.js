@@ -7,7 +7,7 @@ var Promise = require('promise');
 var Deferred = require('deferred')
 
 var baudRate = 115200;
-var parity = "none";
+var parity = 'none';
 var dataBits = 8;
 var requestTimeout = 2000;
 
@@ -19,8 +19,9 @@ var smartCircuitSerialOptions = {
 	parser : SerialPort.parsers.readline("\r\n")
 };
 
-var SmartCircuit = function(device) {
+var SmartCircuit = function(device, logContext) {
 	this.device = device;
+	this.logContext = logContext;
 	this.smartCircuitSerialPromise = null;
 	var _this = this;
 	this.serialQueue = new SerialQueue(function(request) {
@@ -124,22 +125,22 @@ SmartCircuit.prototype.getConnection = function() {
 				true,
 				function(error) {
 			        if (error) {
-		                console.log("Error opening SmartCircuit device.");
-		                console.log(error);
+			        	_this.logContext.log('Error opening SmartCircuit device.');
+		                _this.logContext.log(error);
 		                _this.smartCircuitSerialPromise = null; // allow re-trying for a connection after a failure.
 		                reject(error);
 			        } else {
-			        	console.log("Opened SmartCircuit device successfully.");
+			        	_this.logContext.log('Opened SmartCircuit device successfully.');
 		                
 		                // handle incoming data with the onData function.
-		                pentametricSerial.on("data", function(data) {
+		                pentametricSerial.on('data', function(data) {
 		                	_this.onData(data);
 		                });
 
 		                // On close, require the connection to be opened again.
-		                pentametricSerial.on("close", function() {
+		                pentametricSerial.on('close', function() {
 							_this.smartCircuitSerialPromise = null;
-							console.log("Serial device closed!");
+							_this.logContext.log('Serial device closed!');
 						});
 						resolve(pentametricSerial);
 			        }

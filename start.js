@@ -1,27 +1,32 @@
 'use strict';
 
-var Configuration = require("./configuration.js");
+var LogContext = require('./logcontext.js');
+var Configuration = require('./configuration.js');
+var colors = require('colors/safe');
 
-console.log("OffGridMonitoring Bridge");
-console.log("Jordan Crawford 2016");
+console.log(colors.green('Off Grid Monitoring') + ': Bridge');
+console.log(colors.dim('Jordan Crawford, 2016'));
 
 var configurationFile = process.argv[2];
 
 if (!configurationFile) {
-	console.log("Usage: node . [configuration file path]");
+	console.log('Usage: node . [configuration file path]');
 	process.exit();
 }
 
 // Load in the configuration file.
 Configuration.load(configurationFile);
 
-console.log("Loaded configuration file: " + Configuration.current.name);
+var logContext = new LogContext(['Bridge']);
+logContext.log('Loaded configuration file: ' + Configuration.current.name + ' from "' + configurationFile + '"');
+logContext = logContext.descend(Configuration.current.name); // include the configuration name in the logContext
 
-console.log("sensors");
-Configuration.current.sensors.forEach(function(sensor) {
-	console.log("Setting up sensor: " + sensor.name);
+console.log("devices");
+Configuration.current.devices.forEach(function(device) {
+	var deviceLogContext = logContext.descend(device.name);
+	deviceLogContext.log('Setting up.');
 
 
-	console.log("current sensor");
-	console.log(sensor);
+	console.log("current device");
+	console.log(device);
 });

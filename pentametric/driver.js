@@ -1,5 +1,10 @@
 'use strict';
 
+/*
+	The driver to communicate with the Pentametric device.
+	This provides high level functions for the raw device commands.
+*/
+
 var SerialPort = require('serialport')
 var SerialPortObject = SerialPort.SerialPort;
 var Promise = require('promise');
@@ -20,8 +25,9 @@ var pentametricSerialOptions = {
 	parity : parity
 };
 
-var Pentametric = function(device) {
+var PentametricDriver = function(device, logContext) {
 	this.device = device;
+	this.logContext = logContext;
 	this.pentametricSerialPromise = null;
 	var _this = this;
 	this.serialQueue = new SerialQueue(function(request) {
@@ -41,13 +47,13 @@ var Pentametric = function(device) {
 };
 
 // Returns a promise containing the voltage at the address.
-Pentametric.prototype.getVoltageReading = function(id) {
+PentametricDriver.prototype.getVoltageReading = function(id) {
 	return this.queueCommand(id, 2).then(function(data) {
 		return data / 20;
 	});
 };
 
-Pentametric.prototype.getCurrentReading = function(id) {
+PentametricDriver.prototype.getCurrentReading = function(id) {
 	id += 4;
 	return this.queueCommand(id, 3).then(function(data) {
    		// From Mohammed Alahmari's original code.
@@ -63,7 +69,7 @@ Pentametric.prototype.getCurrentReading = function(id) {
 
 // Adds a request to the processing queue.
 	// Returns a promise.
-Pentametric.prototype.queueCommand = function(address, bytesToGet) {
+PentametricDriver.prototype.queueCommand = function(address, bytesToGet) {
 	var deferred = Deferred();
 	this.serialQueue.add({
 		address : address,
@@ -76,7 +82,7 @@ Pentametric.prototype.queueCommand = function(address, bytesToGet) {
 };
 
 // Hander for data received on the serial port.
-Pentametric.prototype.onData = function(data) {
+PentametricDriver.prototype.onData = function(data) {
     var current = this.serialQueue.current();
     if (current) { // if expecting some data
     	current.receivedData = Buffer.concat([current.receivedData, data]);
@@ -108,7 +114,7 @@ Pentametric.prototype.onData = function(data) {
 }
 
 // Returns a promise containing the open serial device.
-Pentametric.prototype.getConnection = function() {
+PentametricDriver.prototype.getConnection = function() {
 	if (!this.pentametricSerialPromise) {
 		var _this = this;
 		this.pentametricSerialPromise = new Promise(function(resolve, reject) {
@@ -117,13 +123,13 @@ Pentametric.prototype.getConnection = function() {
 				true,
 				function(error) {
 			        if (error) {
-		                console.log("Error opening Pentametric device.");
-		                console.log(error);
+			        	_this.logContext.log("Error opening Pentametric device.");
+			        	_this.logContext.log(error);
 		                _this.pentametricSerialPromise = null; // allow re-trying for a connection after a failure.
 		                reject(error);
 			        } else {
-			        	console.log("Opened Pentametric device successfully.");
-		                
+			        	_this.logContext.log("Opened Pentametric device successfully.");
+
 		                // handle incoming data with the onData function.
 		                pentametricSerial.on("data", function(data) {
 		                	_this.onData(data);
@@ -132,7 +138,7 @@ Pentametric.prototype.getConnection = function() {
 		                // On close, require the connection to be opened again.
 		                pentametricSerial.on("close", function() {
 							_this.pentametricSerialPromise = null;
-							console.log("Serial device closed!");
+							_this.logContext.log("Serial device closed!");
 						});
 						resolve(pentametricSerial);
 			        }
@@ -143,4 +149,4 @@ Pentametric.prototype.getConnection = function() {
 	return this.pentametricSerialPromise;
 }
 
-module.exports = Pentametric;
+module.exports = PentametricDriver;
