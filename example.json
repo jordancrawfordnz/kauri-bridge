@@ -1,6 +1,6 @@
 {
 	"name" : "Example Configuration",
-	"apiCommunication" : {
+	"apiInteraction" : {
 		"apiEndpoint" : "https://engmon.cms.waikato.ac.nz/api",
 		"bridgeId" : "12345",
 		"bridgeSecret" : "mysecret"

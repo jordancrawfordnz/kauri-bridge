@@ -11,8 +11,8 @@ See the ``config.example`` file.
 ### Name
 The ``name`` of the configuration file. To be displayed in diagnostic messages.
 
-### API Communication
-The ``apiCommunication`` object defines the ``apiEndpoint`` to use for requests and the ``bridgeId`` data is added against.
+### API Interaction
+The ``apiInteraction`` object defines the ``apiEndpoint`` to use for requests and the ``bridgeId`` data is added against.
 
 The ``bridgeSecret`` is used to authenticate requests from this bridge and should be kept a secret!
 
