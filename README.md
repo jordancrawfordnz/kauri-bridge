@@ -47,6 +47,11 @@ Where:
 This should be run as soon as possible after sensor data received such that the data is considered current (timestamp will be added).
  
 - ``logContext`` is a LogContext object.
+
+The device must implement the following methods:
+
+- start() - should start collection running.
+- stop() - shound stop collection from running.
  
 ### Allow device autoloading
 Device objects are found using the ``type`` of the device. These mappings from ``type`` to device object are setup in ``sensordrivers.js``.

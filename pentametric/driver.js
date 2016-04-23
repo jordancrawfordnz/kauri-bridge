@@ -124,8 +124,7 @@ PentametricDriver.prototype.getConnection = function() {
 				function(error) {
 			        if (error) {
 			        	_this.logContext.log("Error opening Pentametric device.");
-			        	_this.logContext.log(error);
-		                _this.pentametricSerialPromise = null; // allow re-trying for a connection after a failure.
+			        	_this.pentametricSerialPromise = null; // allow re-trying for a connection after a failure.
 		                reject(error);
 			        } else {
 			        	_this.logContext.log("Opened Pentametric device successfully.");

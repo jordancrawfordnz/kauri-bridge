@@ -126,7 +126,6 @@ SmartCircuit.prototype.getConnection = function() {
 				function(error) {
 			        if (error) {
 			        	_this.logContext.log('Error opening SmartCircuit device.');
-		                _this.logContext.log(error);
 		                _this.smartCircuitSerialPromise = null; // allow re-trying for a connection after a failure.
 		                reject(error);
 			        } else {
