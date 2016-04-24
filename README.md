@@ -18,12 +18,17 @@ The ``bridgeSecret`` is used to authenticate requests from this bridge and shoul
 
 A bridge must be setup in the API prior to use.
 
+### Device Poll Frequency
+``devicePollFrequency`` is how often all devices will be checked for data in seconds. This should be something divisible by 60 (for consistancy between clients), otherwise 10 will be used.
+
+### Data Send Frequency
+``dataSendFrequency`` is how often readings will be pushed to the API as a batch. This should be something divisible by 60 (for consistancy between clients), otherwise 10 will be used.
+
 ### Devices
 A device is not a concept known to the API. A device is a single physical device which will contain multipule sensors.
 
 - ``name`` is used for diagnostic output purposes.
 - ``type`` is used to determine which driver to use.
-- ``pollFrequency`` is how often the device will be checked for data in seconds.
 - ``devicePath`` is the filesystem path to the serial device.
 
 #### Sensors
@@ -41,17 +46,12 @@ The constructor must be:
 
 Where:
 - ``configuration`` is the configuration for the device.
-
-- ``sendSensorData`` is a ``function (sensorId, sensorData)``
-
-This should be run as soon as possible after sensor data received such that the data is considered current (timestamp will be added).
  
 - ``logContext`` is a LogContext object.
 
 The device must implement the following methods:
 
-- start() - should start collection running.
-- stop() - shound stop collection from running.
+- ``fetch()`` - should fetch the latest data for all the devices sensors. Returns a promise with an array of ``{ id : [id], value : [value] }``.
  
 ### Allow device autoloading
 Device objects are found using the ``type`` of the device. These mappings from ``type`` to device object are setup in ``sensordrivers.js``.

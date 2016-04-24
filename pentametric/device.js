@@ -5,59 +5,46 @@
 	This follows a standard format for consistancy with other devices.
 */
 
+var Promise = require('promise');
 var PentametricDriver = require('./driver.js');
 
-var PentametricDevice = function(configuration, sendSensorData, logContext) {
+var PentametricDevice = function(configuration, logContext) {
 	this.configuration = configuration;
-	this.sendSensorData = sendSensorData;
 	this.logContext = logContext;
 	this.driver = new PentametricDriver(configuration.devicePath, logContext.descend('Driver'));
 };
 
-// Collect data.
-PentametricDevice.prototype._collect = function() {
+// Collect data. Returns a promise with an array of { id : [id], value : [value] }.
+PentametricDevice.prototype.fetch = function() {
 	var _this = this;
 	_this.logContext.log('Collect data.');
+
+	var promises = [];
 
 	var sensors = _this.configuration.sensors;
 	sensors.forEach(function(sensor) {
 		if (sensor.sensorType === 'voltage') {
-			_this.driver.getVoltageReading(sensor.sensorNumber).then(function(reading) {
-				_this.sendSensorData(sensor.id, reading);
-			}, function(error) {
-				_this.logContext.log('Error reading voltage sensor ' + sensor.id);
-				_this.logContext.log(error);
-			});
+			promises.push(new Promise(function(resolve) {
+				_this.driver.getVoltageReading(sensor.sensorNumber).then(function(reading) {
+					resolve({id : sensor.id, value : reading});
+				}, function(error) {
+					_this.logContext.log('Error reading voltage sensor ' + sensor.id);
+					_this.logContext.log(error);
+				});
+			}));
 		} else if (sensor.sensorType === 'current') {
-			_this.driver.getCurrentReading(sensor.sensorNumber).then(function(reading) {
-				_this.sendSensorData(sensor.id, reading);
-			}, function(error) {
-				_this.logContext.log('Error reading current sensor ' + sensor.id);
-				_this.logContext.log(error);
-			});
+			promises.push(new Promise(function(resolve) {
+				_this.driver.getCurrentReading(sensor.sensorNumber).then(function(reading) {
+					resolve({id : sensor.id, value : reading});
+				}, function(error) {
+					_this.logContext.log('Error reading current sensor ' + sensor.id);
+					_this.logContext.log(error);
+				});
+			}));
 		}
 	});
-};
 
-// Starts collection.
-PentametricDevice.prototype.start = function() {
-	if (this.interval) {
-		return;
-	}
-	var _this = this;
-	this.interval = setInterval(function() {
-		_this._collect();
-	}, 1000*this.configuration.pollFrequency);
-	this._collect(); // start straight away.
-};
-
-// Stops collection.
-PentametricDevice.prototype.stop = function() {
-	if (!this.interval) {
-		return;
-	}
-	clearInterval(this.interval);
-	_this.logContext.log('Stopped.');
+	return Promise.all(promises);
 };
 
 module.exports = PentametricDevice;
