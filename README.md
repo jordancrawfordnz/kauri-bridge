@@ -6,7 +6,7 @@ A single bridge can have multipule devices, but a bridge belongs to only a singl
 
 ## Configuration
 
-See the ``config.example`` file.
+See the ``example.json`` file.
 
 ### Name
 The ``name`` of the configuration file. To be displayed in diagnostic messages.
