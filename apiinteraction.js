@@ -11,7 +11,6 @@ var APIInteraction = function(configuration, logContext) {
 	this.configuration = configuration;
 	this.logContext = logContext;
 	this.queuedReadings = [];
-	this.resetReading();
 
 	var getBridgeOptions = { 
 		method: 'GET',
@@ -52,8 +51,9 @@ APIInteraction.prototype.resetReading = function(timestamp) {
 // Adds sensor data to the current reading.
 	// Sensor data is an array containing id and value.
 APIInteraction.prototype.queueSensorData = function(sensorData) {
+	var _this = this;
 	sensorData.forEach(function(data) {
-		this.currentReading[data.id] = data.value;
+		_this.currentReading.values[data.id] = data.value;
 	});
 };
 
@@ -63,14 +63,15 @@ APIInteraction.prototype.sendReadings = function() {
 	
 	// Check each reading is sendworthy.
 	this.queuedReadings.forEach(function(reading) {
-		if (reading.values.length > 0) {
+		if (Object.keys(reading.values).length > 0) {
 			toSend.push(reading);
 		}
 	});
+	
+	var configuration = this.configuration;
 
 	// Clear queued readings.
 	this.queuedReadings.splice(0, this.queuedReadings.length);
-
 	if (toSend.length > 0) { // send some data away if there is something to send!
 		var options = {
 			method: 'POST',

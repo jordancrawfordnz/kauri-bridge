@@ -37,7 +37,7 @@ var devices = [];
 
 // Setup the poll timer.
 Timing.startMinutelyTimer(Configuration.current.devicePollFrequency, function() {
-	apiInteraction.resetReading(new Date().getTime() / 1000); // reset the reading to use for this timestamp.
+	apiInteraction.resetReading(Math.floor(new Date().getTime() / 1000)); // reset the reading to use for this timestamp.
 	
 	// Fetch from each device then queue the data in API interaction.
 	devices.forEach(function(device) {
