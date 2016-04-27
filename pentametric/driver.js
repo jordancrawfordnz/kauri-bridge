@@ -16,7 +16,7 @@ var parity = "none";
 var dataBits = 8;
 var timeout = 5;
 var readCommand = 0x81;
-var requestTimeout = 500;
+var requestTimeout = 800;
 
 // Setup an object for the serial port.
 var pentametricSerialOptions = {

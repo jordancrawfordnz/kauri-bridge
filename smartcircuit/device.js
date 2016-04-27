@@ -40,8 +40,8 @@ SmartCircuitDevice.prototype.fetch = function() {
 					_this.configuration.sensors.forEach(function(sensor) {
 						// Check if we have a key for this sensor.
 						var sensorValue = latestReading[sensor.sensorKey];
-						if (!sensorValue) {
-							_this.logContext.log('Unknown sensor key.');
+						if (sensorValue === undefined) {
+							_this.logContext.log('Unknown sensor key: ' + sensor.sensorKey + '.');
 						} else {
 							// Log the sensor data.
 							toReturn.push({ id : sensor.id, value : sensorValue });
