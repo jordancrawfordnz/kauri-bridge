@@ -79,11 +79,13 @@ APIInteraction.prototype.sendReadings = function() {
 	emptyBatches.forEach(function(emptyReading) {
 		_this.queuedReadings.splice(_this.queuedReadings.indexOf(emptyReading), 1); // remove from the queue.
 	});
+
+	// Clear out readings that will be sent from the queue.
+	toSend.forEach(function(toSend) {
+		_this.queuedReadings.splice(_this.queuedReadings.indexOf(toSend), 1);
+	})
 	
 	var configuration = this.configuration;
-
-	// Clear all queued readings.
-	this.queuedReadings.splice(0, this.queuedReadings.length);
 
 	if (toSend.length > 0) { // send some data away if there is something to send!
 		var options = {
