@@ -27,8 +27,8 @@ var APIInteraction = function(configuration, logContext) {
 	// Test the bridge communication by fetching the API's name for this bridge.
 	request(getBridgeOptions, function (error, response, bridge) {
  		if (error) {
- 			_this.logContext.log('Error while getting bridge details.');
-			_this.logContext.log(error);
+ 			logContext.log('Error while getting bridge details.');
+			logContext.log(error);
  		} else {
  			logContext.log('Bridge connected to API successfully, my name: ' + bridge.name);
  		}
@@ -87,6 +87,7 @@ APIInteraction.prototype.sendReadings = function() {
 		};
 
 		var _this = this;
+		this.logContext.log('Starting post to backend.');
 		request(options, function (error, response, body) {
 		 		if (error) {
 		 			_this.logContext.log('Error while posting data.');
