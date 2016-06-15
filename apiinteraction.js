@@ -67,9 +67,12 @@ APIInteraction.prototype.sendReadings = function() {
 
 	// Determine which batches should be sent and which removed.
 	this.queuedReadings.forEach(function(reading) {
-		// Only sends up to the maximum readings per batch.
-		if (Object.keys(reading.values).length > 0 && toSend.length < maxReadingsPerBatch) {
-			toSend.push(reading);
+		if (Object.keys(reading.values).length > 0) {
+			// Only sends up to the maximum readings per batch.
+			if (toSend.length < maxReadingsPerBatch) {
+				toSend.push(reading);
+			}
+			// else keeps the reading in the queue
 		} else {
 			emptyBatches.push(reading);
 		}
@@ -81,9 +84,9 @@ APIInteraction.prototype.sendReadings = function() {
 	});
 
 	// Clear out readings that will be sent from the queue.
-	toSend.forEach(function(toSend) {
-		_this.queuedReadings.splice(_this.queuedReadings.indexOf(toSend), 1);
-	})
+	toSend.forEach(function(valueToSend) {
+		_this.queuedReadings.splice(_this.queuedReadings.indexOf(valueToSend), 1);
+	});
 	
 	var configuration = this.configuration;
 
