@@ -7,6 +7,8 @@
 var request = require('request');
 var dateFormat = require('dateformat')
 
+var maxReadingsPerBatch = 50;
+
 var APIInteraction = function(configuration, logContext) {
 	this.configuration = configuration;
 	this.logContext = logContext;
@@ -59,13 +61,23 @@ APIInteraction.prototype.queueSensorData = function(sensorData) {
 
 // Sends away the current set of readings except the first reading.
 APIInteraction.prototype.sendReadings = function() {
+	var _this = this;
 	var toSend = [];
-	
-	// Determine which batches should be sent (others will just be discarded).
+	var emptyBatches = [];
+
+	// Determine which batches should be sent and which removed.
 	this.queuedReadings.forEach(function(reading) {
-		if (Object.keys(reading.values).length > 0) {
+		// Only sends up to the maximum readings per batch.
+		if (Object.keys(reading.values).length > 0 && toSend.length < maxReadingsPerBatch) {
 			toSend.push(reading);
+		} else {
+			emptyBatches.push(reading);
 		}
+	});
+
+	// Clear out empty batches
+	emptyBatches.forEach(function(emptyReading) {
+		_this.queuedReadings.splice(_this.queuedReadings.indexOf(emptyReading), 1); // remove from the queue.
 	});
 	
 	var configuration = this.configuration;
@@ -87,19 +99,16 @@ APIInteraction.prototype.sendReadings = function() {
 		  	json: true
 		};
 
-		var _this = this;
 		this.logContext.log('Starting post to backend.');
 		request(options, function (error, response, body) {
 		 		if (error) {
-		 			// Add un-sent batches back into the queue. Something went wrong here.
-		 			toSend.forEach(function(reading) {
-		 				_this.queuedReadings.push(reading);
-		 			});
-
+		 			// Add un-sent batches to the front of the queue so they can be re-sent.
+		 			_this.queuedReadings = toSend.concat(_this.queuedReadings);
+		 			
 		 			_this.logContext.log('Error while posting data. ' + toSend.length + ' batches re-added to the queue, queue size: ' + _this.queuedReadings.length);
 					_this.logContext.log(error);
 		 		} else {
-		 			_this.logContext.log('Sent ' + toSend.length + ' batches successfully.');
+		 			_this.logContext.log('Sent ' + toSend.length + ' batches successfully. ' + _this.queuedReadings.length + ' remaining in the queue.');
 		 		}
 		});
 	}
