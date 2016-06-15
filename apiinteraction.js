@@ -61,7 +61,7 @@ APIInteraction.prototype.queueSensorData = function(sensorData) {
 APIInteraction.prototype.sendReadings = function() {
 	var toSend = [];
 	
-	// Check each reading is sendworthy.
+	// Determine which batches should be sent (others will just be discarded).
 	this.queuedReadings.forEach(function(reading) {
 		if (Object.keys(reading.values).length > 0) {
 			toSend.push(reading);
@@ -70,8 +70,9 @@ APIInteraction.prototype.sendReadings = function() {
 	
 	var configuration = this.configuration;
 
-	// Clear queued readings.
+	// Clear all queued readings.
 	this.queuedReadings.splice(0, this.queuedReadings.length);
+
 	if (toSend.length > 0) { // send some data away if there is something to send!
 		var options = {
 			method: 'POST',
@@ -90,7 +91,12 @@ APIInteraction.prototype.sendReadings = function() {
 		this.logContext.log('Starting post to backend.');
 		request(options, function (error, response, body) {
 		 		if (error) {
-		 			_this.logContext.log('Error while posting data.');
+		 			// Add un-sent batches back into the queue. Something went wrong here.
+		 			toSend.forEach(function(reading) {
+		 				_this.queuedReadings.push(reading);
+		 			});
+
+		 			_this.logContext.log('Error while posting data. ' + toSend.length + ' batches re-added to the queue, queue size: ' + _this.queuedReadings.length);
 					_this.logContext.log(error);
 		 		} else {
 		 			_this.logContext.log('Sent ' + toSend.length + ' batches successfully.');
