@@ -17,7 +17,7 @@ var APIInteraction = function(configuration, logContext) {
 	var getBridgeOptions = { 
 		method: 'GET',
 		url: this.configuration.apiEndpoint + '/Bridges/' + 
-			 configuration.bridgeId + '?bridgeSecret=' + configuration.bridgeSecret,
+			 configuration.bridgeId + '/recordreadings?bridgeSecret=' + configuration.bridgeSecret,
   		headers: 
 		{
 			'cache-control': 'no-cache',
