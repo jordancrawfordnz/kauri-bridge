@@ -17,7 +17,7 @@ var APIInteraction = function(configuration, logContext) {
 	var getBridgeOptions = { 
 		method: 'GET',
 		url: this.configuration.apiEndpoint + '/Bridges/' + 
-			 configuration.bridgeId + '/recordreadings?bridgeSecret=' + configuration.bridgeSecret,
+			 configuration.bridgeId + '?bridgeSecret=' + configuration.bridgeSecret,
   		headers: 
 		{
 			'cache-control': 'no-cache',
@@ -94,7 +94,7 @@ APIInteraction.prototype.sendReadings = function() {
 		var options = {
 			method: 'POST',
 		  	url: this.configuration.apiEndpoint + '/Bridges/' + 
-			 configuration.bridgeId + '/readings?bridgeSecret=' + configuration.bridgeSecret,
+			 configuration.bridgeId + '/recordreadings?bridgeSecret=' + configuration.bridgeSecret,
 		  	headers: 
 		   	{
 		   		'cache-control': 'no-cache',
