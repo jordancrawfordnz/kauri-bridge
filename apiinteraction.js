@@ -106,11 +106,11 @@ APIInteraction.prototype.sendReadings = function() {
 
 		this.logContext.log('Starting post to backend.');
 		request(options, function (error, response, body) {
-		 		if (error) {
+		 		if (error || response.statusCode !== 200) {
 		 			// Add un-sent batches to the front of the queue so they can be re-sent.
 		 			_this.queuedReadings = toSend.concat(_this.queuedReadings);
 		 			
-		 			_this.logContext.log('Error while posting data. ' + toSend.length + ' batches re-added to the queue, queue size: ' + _this.queuedReadings.length);
+		 			_this.logContext.log('Error while posting data. ' + toSend.length + ' batches re-added to the queue, queue size: ' + _this.queuedReadings.length + ', status code: ' + response.statusCode);
 					_this.logContext.log(error);
 		 		} else {
 		 			_this.logContext.log('Sent ' + toSend.length + ' batches successfully. ' + _this.queuedReadings.length + ' remaining in the queue.');
