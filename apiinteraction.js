@@ -106,7 +106,7 @@ APIInteraction.prototype.sendReadings = function() {
 
 		this.logContext.log('Starting post to backend.');
 		request(options, function (error, response, body) {
-		 		if (error || response.statusCode !== 200) {
+		 		if (error || response === null || response.statusCode !== 200) {
 		 			// Add un-sent batches to the front of the queue so they can be re-sent.
 		 			_this.queuedReadings = toSend.concat(_this.queuedReadings);
 		 			
