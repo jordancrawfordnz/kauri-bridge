@@ -5,12 +5,12 @@
   "main": "start.js",
   "dependencies": {
     "colors": "^1.1.2",
-    "dateformat": "^1.0.12",
+    "dateformat": "^2.0.0",
     "deferred": "^0.7.5",
     "jsonfile": "^2.2.3",
     "promise": "^7.1.1",
     "request": "^2.72.0",
-    "serialport": "^2.0.6"
+    "serialport": "^4.0.7"
   },
   "devDependencies": {},
   "scripts": {

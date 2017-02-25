@@ -1,0 +1,40 @@
+{
+	"name" : "Example Configuration",
+	"apiInteraction" : {
+		"apiEndpoint" : "https://yourdomain.com/api",
+		"bridgeId" : "12345",
+		"bridgeSecret" : "mysecret"
+	},
+	"devicePollFrequency" : 10,
+	"dataSendFrequency" : 60,
+	"devices" : [
+		{
+			"name" : "Static Sensor 1",
+			"type" : "staticsensor",
+			"sensors" : [
+				{
+					"id" : "12341",
+					"value" : 20
+				},
+				{
+					"id" : "12342",
+					"value" : 50
+				}
+			]
+		},
+    {
+			"name" : "Static Sensor 2",
+			"type" : "staticsensor",
+			"sensors" : [
+				{
+					"id" : "12343",
+					"value" : 100
+				},
+				{
+					"id" : "12344",
+					"value" : 1000
+				}
+			]
+		}
+	]
+}
