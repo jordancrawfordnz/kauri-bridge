@@ -28,9 +28,11 @@ var APIInteraction = function(configuration, logContext) {
 
   // Test the bridge communication by fetching the API's name for this bridge.
   request(getBridgeOptions, function (error, response, bridge) {
-    if (error) {
+    if (error || !response || response.statusCode !== 200) {
       logContext.log('Error while getting bridge details.');
-      logContext.log(error);
+      if (error) {
+        logContext.log(error);
+      }
     } else {
       logContext.log('Bridge connected to API successfully, my name: ' + bridge.name);
     }
@@ -103,12 +105,24 @@ APIInteraction.prototype.sendReadings = function() {
 
     this.logContext.log('Starting post to backend.');
     request(options, function (error, response, body) {
-      if (error || response === null || response.statusCode !== 200) {
+      if (error || !response || response.statusCode !== 200) {
         // Add un-sent batches to the front of the queue so they can be re-sent.
         _this.queuedReadings = toSend.concat(_this.queuedReadings);
 
-        _this.logContext.log('Error while posting data. ' + toSend.length + ' batches re-added to the queue, queue size: ' + _this.queuedReadings.length + ', status code: ' + response.statusCode);
-        _this.logContext.log(error);
+        var logMessage = 'Error while posting data. ' + toSend.length + ' batches re-added to the queue, queue size: ' + _this.queuedReadings.length;
+        if (response && response.statusCode) {
+          logMessage += ', status code: ' + response.statusCode;
+        } else {
+          logMessage += ', no status code information avaliable.';
+        }
+
+        _this.logContext.log(logMessage);
+        if (error) {
+          _this.logContext.log(error);
+        }
+        if (response.body) {
+          _this.logContext.log(JSON.stringify(response.body));
+        }
       } else {
         _this.logContext.log('Sent ' + toSend.length + ' batches successfully. ' + _this.queuedReadings.length + ' remaining in the queue.');
       }

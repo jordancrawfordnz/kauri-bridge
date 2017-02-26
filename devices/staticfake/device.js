@@ -10,17 +10,21 @@
 var Promise = require('promise');
 
 var StaticFakeDevice = function(configuration, logContext) {
-	this.configuration = configuration;
-	this.logContext = logContext;
+  this.configuration = configuration;
+  this.logContext = logContext;
 };
 
 // Collect data. Returns a promise with an array of { id : [id], value : [value] }.
 StaticFakeDevice.prototype.fetch = function() {
-	return new Promise(function(resolve) {
+  var _this = this;
+
+  return new Promise(function(resolve) {
     var toReturn = [];
 
     _this.configuration.sensors.forEach(function(sensor) {
       toReturn.push({ id : sensor.id, value : sensor.value });
+
+      _this.logContext.log('Static sensor reading sent. Sensor ID: ' + sensor.id + ', Value: ' + sensor.value);
     });
 
     resolve(toReturn);

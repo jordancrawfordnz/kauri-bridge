@@ -10,7 +10,7 @@
 	"devices" : [
 		{
 			"name" : "Static Sensor 1",
-			"type" : "staticsensor",
+			"type" : "staticfake",
 			"sensors" : [
 				{
 					"id" : "12341",
@@ -24,7 +24,7 @@
 		},
     {
 			"name" : "Static Sensor 2",
-			"type" : "staticsensor",
+			"type" : "staticfake",
 			"sensors" : [
 				{
 					"id" : "12343",
