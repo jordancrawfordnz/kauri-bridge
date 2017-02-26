@@ -23,6 +23,7 @@ var SmartCircuit = function(device, logContext) {
   this.logContext = logContext;
   this.smartCircuitSerialPromise = null;
   var _this = this;
+
   this.serialQueue = new SerialQueue(function(request) {
     _this.getConnection().then(function(connection) {
       connection.write(request.command, function(error) {
@@ -59,6 +60,7 @@ SmartCircuit.prototype.queueCommand = function(command, handler) {
 // Clears the memory of the smart circuit device.
 SmartCircuit.prototype.clearMemory = function() {
   var _this = this;
+
   return this.queueCommand("#R,W,0;", function(data, request) {
     request.deferred.resolve();
     _this.serialQueue.next(); // move on once some data comes back.
@@ -119,36 +121,37 @@ SmartCircuit.prototype.getConnection = function() {
   if (!this.smartCircuitSerialPromise) {
     var _this = this;
 
-    var serialPortCallback = function(error) {
-      if (error) {
-        _this.logContext.log('Error opening SmartCircuit device.');
-        _this.smartCircuitSerialPromise = null; // allow re-trying for a connection after a failure.
-        reject(error);
-      } else {
-        _this.logContext.log('Opened SmartCircuit device successfully.');
-
-        // handle incoming data with the onData function.
-        pentametricSerial.on('data', function(data) {
-          _this.onData(data);
-        });
-        // On close, require the connection to be opened again.
-        pentametricSerial.on('close', function() {
-          _this.smartCircuitSerialPromise = null;
-          _this.logContext.log('Serial device closed!');
-        });
-        resolve(pentametricSerial);
-      }
-    }
-
     this.smartCircuitSerialPromise = new Promise(function(resolve, reject) {
       var pentametricSerial = new SerialPort(
         _this.device,
-        smartCircuitSerialOptions,
-        true,
-        serialPortCallback
+        smartCircuitSerialOptions
       );
+
+      pentametricSerial.on('error', function(error) {
+        _this.logContext.log('Error opening SmartCircuit device.');
+        _this.smartCircuitSerialPromise = null; // allow re-trying for a connection after a failure.
+        reject(error);
+      });
+
+      pentametricSerial.on('open', function() {
+        _this.logContext.log('Opened SmartCircuit device successfully.');
+
+        resolve(pentametricSerial);
+      });
+
+      // handle incoming data with the onData function.
+      pentametricSerial.on('data', function(data) {
+        _this.onData(data);
+      });
+
+      // On close, require the connection to be opened again.
+      pentametricSerial.on('close', function() {
+        _this.smartCircuitSerialPromise = null;
+        _this.logContext.log('Serial device closed!');
+      });
     });
   }
+
   return this.smartCircuitSerialPromise;
 }
 

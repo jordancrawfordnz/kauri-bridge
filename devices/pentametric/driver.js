@@ -94,7 +94,7 @@ PentametricDriver.prototype.onData = function(data) {
       // Check the checksum.
       var total = 0;
       for (var value of current.receivedData.values()) {
-        total += value;	
+        total += value;
       }
 
       if (total &= 0xFF === 0xFF) {
@@ -122,34 +122,34 @@ PentametricDriver.prototype.getConnection = function() {
     var _this = this;
 
     this.pentametricSerialPromise = new Promise(function(resolve, reject) {
-      var pentametricSerial = new SerialPort(_this.device,
-        pentametricSerialOptions,
-        true,
-        function(error) {
-          if (error) {
-            _this.logContext.log("Error opening Pentametric device.");
-            _this.pentametricSerialPromise = null; // allow re-trying for a connection after a failure.
-            reject(error);
-          } else {
-            _this.logContext.log("Opened Pentametric device successfully.");
+      var pentametricSerial = new SerialPort(
+        _this.device,
+        pentametricSerialOptions);
 
-            // handle incoming data with the onData function.
-            pentametricSerial.on("data", function(data) {
-              _this.onData(data);
-            });
+      pentametricSerial.on('error', function(error) {
+        _this.logContext.log("Error opening Pentametric device.");
+        _this.pentametricSerialPromise = null; // allow re-trying for a connection after a failure.
+        reject(error);
+      });
 
-            // On close, require the connection to be opened again.
-            pentametricSerial.on("close", function() {
-              _this.pentametricSerialPromise = null;
-              _this.logContext.log("Serial device closed!");
-            });
+      pentametricSerial.on('open', function() {
+        _this.logContext.log("Opened Pentametric device successfully.");
+        resolve(pentametricSerial);
+      });
 
-            resolve(pentametricSerial);
-          }
-        }
-      );
+      // handle incoming data with the onData function.
+      pentametricSerial.on('data', function(data) {
+        _this.onData(data);
+      });
+
+      // On close, require the connection to be opened again.
+      pentametricSerial.on('close', function() {
+        _this.pentametricSerialPromise = null;
+        _this.logContext.log("Serial device closed!");
+      });
     });
   }
+
   return this.pentametricSerialPromise;
 }
 
