@@ -1,7 +1,7 @@
 var LogContext = require('../lib/logcontext.js');
 
 var Configuration = require('./configuration.js');
-var DeviceObjects = require('./deviceobjects.js');
+var Devices = require('./devices.js');
 var APIInteraction = require('./apiinteraction.js');
 var Timing = require('./timing.js');
 
@@ -9,7 +9,8 @@ var Bridge = function(configurationFile) {
   this.logContext = new LogContext(['Bridge']);
 
   this._loadConfig(configurationFile);
-  this._setupDevices();
+
+  this.devices = Devices.setupDevicesFromConfiguration(Configuration.current.devices, logContext);
 
   // Setup API interaction.
   this.apiInteraction = new APIInteraction(Configuration.current.apiInteraction, this.logContext.descend('API Interaction'));
@@ -50,26 +51,6 @@ Bridge.prototype._loadConfig = function(configurationFile) {
 
   this.logContext.log('Loaded configuration file: ' + Configuration.current.name + ' from "' + configurationFile + '"');
   this.logContext = this.logContext.descend(Configuration.current.name); // include the configuration name in the logContext
-};
-
-Bridge.prototype._setupDevices = function() {
-  var _this = this;
-
-  _this.devices = [];
-
-  Configuration.current.devices.forEach(function(deviceConfig) {
-    var deviceLogContext = _this.logContext.descend(deviceConfig.name);
-
-    // Find the device object to use.
-    var deviceObject = DeviceObjects[deviceConfig.type];
-    if (!deviceObject) {
-      _this.logContext.log('Unknown device type.');
-      return;
-    }
-
-    deviceLogContext.log('Setting up.');
-    _this.devices.push(new deviceObject(deviceConfig, deviceLogContext));
-  });
 };
 
 module.exports = Bridge;
