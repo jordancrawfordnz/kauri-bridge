@@ -1,0 +1,42 @@
+{
+	"name" : "Example Configuration",
+	"apiInteraction" : {
+		"apiEndpoint" : "https://yourdomain.com/api",
+		"bridgeId" : "12345",
+		"bridgeSecret" : "mysecret"
+	},
+  "readingInterval": 10,
+	"sendDelay": 100,
+  "fillFrom": "00:00:00 01/01/2017",
+  "fillUntil": "00:00:00 01/02/2017",
+  "devices" : [
+		{
+			"name" : "Static Sensor 1",
+			"type" : "staticfake",
+			"sensors" : [
+				{
+					"id" : "12341",
+					"value" : 20
+				},
+				{
+					"id" : "12342",
+					"value" : 50
+				}
+			]
+		},
+    {
+			"name" : "Static Sensor 2",
+			"type" : "staticfake",
+			"sensors" : [
+				{
+					"id" : "12343",
+					"value" : 100
+				},
+				{
+					"id" : "12344",
+					"value" : 1000
+				}
+			]
+		}
+	]
+}

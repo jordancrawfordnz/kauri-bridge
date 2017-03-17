@@ -8,6 +8,7 @@
     "dateformat": "^2.0.0",
     "deferred": "^0.7.5",
     "jsonfile": "^2.2.3",
+    "moment": "^2.17.1",
     "promise": "^7.1.1",
     "request": "^2.72.0",
     "serialport": "^4.0.7"
