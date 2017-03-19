@@ -6,7 +6,7 @@ var APIInteraction = require('./apiinteraction.js');
 var Timing = require('./timing.js');
 
 var Bridge = function(configurationFile) {
-  this.logContext = new LogContext(['Bridge']);
+  this.logContext = new LogContext('Bridge');
 
   this._loadConfig(configurationFile);
 

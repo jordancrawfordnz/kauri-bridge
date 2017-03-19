@@ -39,6 +39,10 @@ var APIInteraction = function(configuration, logContext) {
   });
 };
 
+APIInteraction.prototype.maxPerBatch = function() {
+  return MAX_READINGS_PER_BATCH;
+};
+
 // Resets the current reading. Data is always added to the latest reading.
 // This seals the old reading which will be sent with the next push.
   // The timestamp represents the time period the reading best represents.
@@ -64,70 +68,78 @@ APIInteraction.prototype.queueSensorData = function(sensorData) {
 
 // Sends away the current set of readings except the first reading.
 APIInteraction.prototype.sendReadings = function() {
-  var _this = this;
-  var toSend = [];
-  var emptyBatches = [];
+  return new Promise(function(resolve, reject) {
+    var _this = this;
+    var toSend = [];
+    var emptyBatches = [];
 
-  // Determine which batches should be sent and which removed.
-  this.queuedReadings.forEach(function(reading) {
-    if (Object.keys(reading.values).length > 0) {
-      // Only sends up to the maximum readings per batch.
-      if (toSend.length < MAX_READINGS_PER_BATCH) {
-        toSend.push(reading);
-      }
-      // else keeps the reading in the queue
-    } else {
-      emptyBatches.push(reading);
-    }
-  });
-
-  // Clear out empty batches
-  emptyBatches.forEach(function(emptyReading) {
-    _this.queuedReadings.splice(_this.queuedReadings.indexOf(emptyReading), 1); // remove from the queue.
-  });
-
-  // Clear out readings that will be sent from the queue.
-  toSend.forEach(function(valueToSend) {
-    _this.queuedReadings.splice(_this.queuedReadings.indexOf(valueToSend), 1);
-  });
-
-  var configuration = this.configuration;
-
-  if (toSend.length > 0) { // send some data away if there is something to send!
-    var options = {
-      method: 'POST',
-      body: toSend,
-      json: true
-    };
-
-    options.url = this.configuration.apiEndpoint + '/Bridges/' + configuration.bridgeId + '/recordreadings?bridgeSecret=' + configuration.bridgeSecret;
-    options.headers = HEADERS;
-
-    this.logContext.log('Starting post to backend.');
-    request(options, function (error, response, body) {
-      if (error || !response || response.statusCode !== 200) {
-        // Add un-sent batches to the front of the queue so they can be re-sent.
-        _this.queuedReadings = toSend.concat(_this.queuedReadings);
-
-        var logMessage = 'Error while posting data. ' + toSend.length + ' batches re-added to the queue, queue size: ' + _this.queuedReadings.length;
-        if (response && response.statusCode) {
-          logMessage += ', status code: ' + response.statusCode;
-        } else {
-          logMessage += ', no status code information avaliable.';
+    // Determine which batches should be sent and which removed.
+    this.queuedReadings.forEach(function(reading) {
+      if (Object.keys(reading.values).length > 0) {
+        // Only sends up to the maximum readings per batch.
+        if (toSend.length < MAX_READINGS_PER_BATCH) {
+          toSend.push(reading);
         }
-
-        _this.logContext.log(logMessage);
-        if (error) {
-          _this.logContext.log(error);
-        }
-        if (response.body) {
-          _this.logContext.log(JSON.stringify(response.body));
-        }
+        // else keeps the reading in the queue
       } else {
-        _this.logContext.log('Sent ' + toSend.length + ' batches successfully. ' + _this.queuedReadings.length + ' remaining in the queue.');
+        emptyBatches.push(reading);
       }
     });
-  }
+
+    // Clear out empty batches
+    emptyBatches.forEach(function(emptyReading) {
+      _this.queuedReadings.splice(_this.queuedReadings.indexOf(emptyReading), 1); // remove from the queue.
+    });
+
+    // Clear out readings that will be sent from the queue.
+    toSend.forEach(function(valueToSend) {
+      _this.queuedReadings.splice(_this.queuedReadings.indexOf(valueToSend), 1);
+    });
+
+    var configuration = this.configuration;
+
+    if (toSend.length > 0) { // send some data away if there is something to send!
+      var options = {
+        method: 'POST',
+        body: toSend,
+        json: true
+      };
+
+      options.url = this.configuration.apiEndpoint + '/Bridges/' + configuration.bridgeId + '/recordreadings?bridgeSecret=' + configuration.bridgeSecret;
+      options.headers = HEADERS;
+
+      this.logContext.log('Starting post to backend.');
+      request(options, function (error, response, body) {
+        if (error || !response || response.statusCode !== 200) {
+          // Add un-sent batches to the front of the queue so they can be re-sent.
+          _this.queuedReadings = toSend.concat(_this.queuedReadings);
+
+          var logMessage = 'Error while posting data. ' + toSend.length + ' batches re-added to the queue, queue size: ' + _this.queuedReadings.length;
+          if (response && response.statusCode) {
+            logMessage += ', status code: ' + response.statusCode;
+          } else {
+            logMessage += ', no status code information avaliable.';
+          }
+
+          _this.logContext.log(logMessage);
+          if (error) {
+            _this.logContext.log(error);
+          }
+          if (response.body) {
+            _this.logContext.log(JSON.stringify(response.body));
+          }
+
+          reject(logMessage);
+        } else {
+          var message = 'Sent ' + toSend.length + ' batches successfully. ' + _this.queuedReadings.length + ' remaining in the queue.';
+          _this.logContext.log(message);
+          resolve(message);
+        }
+      });
+    } else {
+      reject('No readings to send.');
+    }
+  }.bind(this));
 };
 
 module.exports = APIInteraction;
