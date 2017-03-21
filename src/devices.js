@@ -3,7 +3,8 @@
 var deviceClasses = {
   smartcircuit : require('../devices/smartcircuit/device.js'),
   pentametric : require('../devices/pentametric/device.js'),
-  staticfake : require('../devices/test/staticfake/device.js')
+  staticfake : require('../devices/test/staticfake/device.js'),
+  csvfake : require('../devices/test/csvfake/device.js')
 };
 
 var Devices = {};

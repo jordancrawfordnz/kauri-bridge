@@ -1,10 +1,9 @@
 'use strict';
 
 /*
-  The device API for the SmartCircuit device.
-  This follows a standard format for consistancy with other devices.
+  This is a fake sensor device.
 
-  This is a fake sensor device. For each sensor it is configured with, this returns the sensor's 'value' property.
+  For each sensor this returns the sensor's 'value' property defined in the sensor configuration.
 */
 
 var Promise = require('promise');

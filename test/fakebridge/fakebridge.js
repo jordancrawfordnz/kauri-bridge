@@ -26,9 +26,9 @@ var FakeBridge = function(configurationFile) {
   this.fillUntil = this._parseConfigDate(Configuration.current.fillUntil);
 
   this.perBatch = Configuration.current.perBatch;
-  if (!this.perBatch || this.perBatch > this.apiInteraction.maxPerBatch()) {
-    this.perBatch = this.apiInteraction.maxPerBatch();
-    this.logContext.log('Defaulting to max readings per batch: ' + this.perBatch);
+  if (!this.perBatch || this.perBatch >= this.apiInteraction.maxPerBatch()) {
+    this.perBatch = this.apiInteraction.maxPerBatch() - 1;  // Subtract 1 to prevent a large build up of readings.
+    this.logContext.log('Defaulting to batches of size ' + this.perBatch);
   }
 };
 

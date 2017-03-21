@@ -1,0 +1,40 @@
+{
+	"name" : "Example Configuration - CSV Fake Sensor",
+	"apiInteraction" : {
+		"apiEndpoint" : "https://yourdomain.com/api",
+		"bridgeId" : "12345",
+		"bridgeSecret" : "mysecret"
+	},
+	"devicePollFrequency" : 10,
+	"dataSendFrequency" : 60,
+	"devices" : [
+		{
+			"name" : "CSV Sensor",
+			"type" : "csvfake",
+			"filePath" : "datasets/offgrid_1week_10secintervals.csv",
+			"startingReadingIndex" : 200,
+			"sensors" : [
+				{
+					"id" : "12341",
+					"column" : "ac_power"
+				},
+				{
+					"id" : "12342",
+					"column" : "system_load_current"
+				},
+				{
+					"id" : "12343",
+					"column" : "battery_voltage"
+				},
+				{
+					"id" : "12344",
+					"column" : "battery_current"
+				},
+				{
+					"id" : "12345",
+					"column" : "solar_current"
+				}
+			]
+		}
+	]
+}

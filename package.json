@@ -5,6 +5,7 @@
   "main": "start.js",
   "dependencies": {
     "colors": "^1.1.2",
+    "csv-parse": "^1.2.0",
     "dateformat": "^2.0.0",
     "deferred": "^0.7.5",
     "jsonfile": "^2.2.3",
