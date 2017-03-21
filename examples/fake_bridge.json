@@ -11,7 +11,7 @@
   "fillUntil": "00:00:00 01/02/2017",
   "devices" : [
 		{
-			"name" : "Static Sensor 1",
+			"name" : "Static Sensor",
 			"type" : "staticfake",
 			"sensors" : [
 				{
@@ -25,16 +25,18 @@
 			]
 		},
     {
-			"name" : "Static Sensor 2",
-			"type" : "staticfake",
+			"name" : "CSV Sensor",
+			"type" : "csvfake",
+			"filePath" : "datasets/offgrid_1week_10secintervals.csv",
+			"startingReadingIndex" : 200,
 			"sensors" : [
 				{
 					"id" : "12343",
-					"value" : 100
+					"column" : "ac_power"
 				},
 				{
 					"id" : "12344",
-					"value" : 1000
+					"column" : "system_load_current"
 				}
 			]
 		}
