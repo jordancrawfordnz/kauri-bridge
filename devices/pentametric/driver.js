@@ -8,7 +8,7 @@
 var SerialPort = require('serialport')
 var Promise = require('promise');
 var Deferred = require('deferred')
-var SerialQueue = require('../../lib/serialqueue.js');
+var SerialQueue = require('../../src/lib/serialqueue.js');
 
 var baudRate = 2400;
 var parity = "none";

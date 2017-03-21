@@ -1,6 +1,6 @@
 'use strict';
 
-var LogContext = require('../../lib/logcontext.js');
+var LogContext = require('../../src/lib/logcontext.js');
 
 if (!process.argv[2]) {
   console.log('node singletest.js [device]');
