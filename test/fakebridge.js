@@ -1,12 +1,12 @@
 // This is a fake bridge, used to back populate data using one of the fake devices.
 
-var LogContext = require('../../lib/logcontext.js');
+var LogContext = require('../src/lib/logcontext.js');
 var moment = require('moment');
 var Promise = require('promise');
 
-var Configuration = require('../../src/configuration.js');
-var Devices = require('../../src/devices.js');
-var APIInteraction = require('../../src/apiinteraction.js');
+var Configuration = require('../src/configuration.js');
+var Devices = require('../src/devices.js');
+var APIInteraction = require('../src/apiinteraction.js');
 
 var CONFIG_DATE_FORMAT = 'HH:mm:ss DD/MM/YYYY'
 

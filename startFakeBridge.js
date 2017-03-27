@@ -1,7 +1,7 @@
 'use strict';
 
 var colors = require('colors/safe');
-var FakeBridge = require('./fakebridge.js')
+var FakeBridge = require('./test/fakebridge.js')
 
 console.log(colors.green('Off Grid Monitoring') + ': Fake Bridge');
 console.log(colors.dim('Jordan Crawford, 2017'));
