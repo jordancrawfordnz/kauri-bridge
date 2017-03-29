@@ -125,7 +125,7 @@ APIInteraction.prototype.sendReadings = function() {
           if (error) {
             _this.logContext.log(error);
           }
-          if (response.body) {
+          if (response && response.body) {
             _this.logContext.log(JSON.stringify(response.body));
           }
 
