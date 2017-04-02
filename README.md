@@ -1,62 +1,69 @@
-# Bridge
+# Renewable Energy Dashboard - Bridge
 
 The bridge collects data from devices with sensors setup and sends this data to the API.
 
-A single bridge can have multipule devices, but a bridge belongs to only a single building.
+A single bridge can have multiple devices, but a bridge belongs to only a single building.
+
+## Running the bridge
+* Install NPM on your system.
+* From the project's folder, run `npm install` to install dependencies.
+* Run `node start.js [relative path to config file]` to start the bridge.
+
+## Supported Devices
+<!-- TODO: List all the supported devices with links to their readmes. -->
 
 ## Configuration
+The configuration file is a JSON file. Below is a list of top level values that must be provided. For an example of a configuration file, see ``examples/config.json``.
 
-See the ``example.json`` file.
+### `name` (string)
+The name of the configuration file. To be displayed in diagnostic messages. e.g.: "Bridge PC"
 
-### Name
-The ``name`` of the configuration file. To be displayed in diagnostic messages.
+### `apiInteraction` (object)
 
-### API Interaction
-The ``apiInteraction`` object defines the ``apiEndpoint`` to use for requests and the ``bridgeId`` data is added against.
+This object defines all configuration needed to upload readings to the API.
 
-The ``bridgeSecret`` is used to authenticate requests from this bridge and should be kept a secret!
+It requires the following options:
 
-A bridge must be setup in the API prior to use.
+* `apiEndpoint` (string)
+  This is the full path the API endpoint, including the protocol, port, etc.
 
-### Device Poll Frequency
-``devicePollFrequency`` is how often all devices will be checked for data in seconds. This should be something divisible by 60 (for consistancy between clients), otherwise 10 will be used.
+  e.g.: https://yourdomain.com/api
 
-### Data Send Frequency
-``dataSendFrequency`` is how often readings will be pushed to the API as a batch. This should be something divisible by 60 (for consistancy between clients), otherwise 10 will be used.
+* `bridgeId` (string)
+  The bridge ID is required to identify readings from this bridge. You can get this by creating a bridge in Renewable Energy Dashboard under "Configuration" -> "Data Collection".
 
-### Devices
-A device is not a concept known to the API. A device is a single physical device which will contain multipule sensors.
+* `bridgeSecret` (string)
+  The bridge secret is like the password for your bridge. This ensures only your can upload readings for your building! This is provided in Renewable Energy Dashboard under "Configuration" -> "Data Collection".
 
-- ``name`` is used for diagnostic output purposes.
-- ``type`` is used to determine which driver to use.
-- ``devicePath`` is the filesystem path to the serial device.
+### `devicePollFrequency` (number, in seconds)
+The device poll frequency is how often all devices will be checked for data in seconds. This should be something divisible by 60 (for consistency between bridge clients), otherwise 10 will be used.
+
+### `dataSendFrequency` (number, in seconds)
+The data send frequency is how often readings will be pushed to the API as a batch. This should be something divisible by 60 (for consistency between bridge clients), otherwise 10 will be used.
+
+### `devices` (array of objects)
+A device is not a concept known to the API. A device is a single physical device which will contain multiple sensors.
+
+A device is an object which consists of:
+
+* `name` (string) is used for diagnostic output purposes.
+* `type` (string) is used to determine which driver to use.
+* `devicePath` (string) is the filesystem path to the serial device.
+  On Linux systems using paths in `/dev/serial/by-path/` is recommended as this identifies the device by it's USB port rather than the order is was connected.
+* `sensors` (array of sensor objects as defined below)
 
 #### Sensors
-A device contains several sensors.
+A device contains several sensors. Sensors must be configured in Renewable Energy Dashboard under "Configuration" -> "Data Collection" -> [your bridge] -> "Sensors". Here, the sensor ID is available.
 
-- ``id`` is the API ID for the sensor (sensor setup in API prior to use)
-- Key fields are used to identify which sensor. These are dependant on the device.
+Each sensor is an object consisting of:
 
-## Writing device software
-### Device Object
-A device object is a standard format used by all devices.
+* `id` (string) is the API ID for the sensor (sensor setup in API prior to use)
+* Key fields are used to identify which sensor. These are dependent on the device so see the read me for the device you're using.
 
-The constructor must be:
-``configuration, sendSensorData, logContext``
+## Implementing your own device
+<!-- TODO: Link to device docs -->
 
-Where:
-- ``configuration`` is the configuration for the device.
- 
-- ``logContext`` is a LogContext object.
+## Testing
+There are fake devices and a fake bridge which you can use to make development of the bridge or other parts of Renewable Energy Dashboard easier.
 
-The device must implement the following methods:
-
-- ``fetch()`` - should fetch the latest data for all the devices sensors. Returns a promise with an array of ``{ id : [id], value : [value] }``.
- 
-### Allow device autoloading
-Device objects are found using the ``type`` of the device. These mappings from ``type`` to device object are setup in ``sensordrivers.js``.
-
-### Device driver
-Typically, device driver's should be written to provide high level functions for a device's raw functions.
-
-For example, for a SmartCircuit device, the driver provides the ability to clear data and fetch data. It is up to the device object to fetch using clear data and fetch data but these sort of tricks should not be performed at the driver level.
+<!-- TODO: Link to the testing docs -->
