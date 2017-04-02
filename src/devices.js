@@ -1,12 +1,5 @@
 'use strict';
 
-var deviceClasses = {
-  smartcircuit : require('../devices/smartcircuit/device.js'),
-  pentametric : require('../devices/pentametric/device.js'),
-  staticfake : require('../devices/test/staticfake/device.js'),
-  csvfake : require('../devices/test/csvfake/device.js')
-};
-
 var Devices = {};
 
 Devices.setupDevicesFromConfiguration = function(devicesConfiguration, logContext) {
@@ -16,7 +9,7 @@ Devices.setupDevicesFromConfiguration = function(devicesConfiguration, logContex
     var deviceLogContext = logContext.descend(deviceConfig.name);
 
     // Find the device object to use.
-    var deviceObject = deviceClasses[deviceConfig.type];
+    var deviceObject = require('../devices/' + deviceConfig.type + '/device.js');
     if (!deviceObject) {
       logContext.log('Unknown device type.');
       return;
