@@ -25,14 +25,17 @@ This object defines all configuration needed to upload readings to the API.
 It requires the following options:
 
 * `apiEndpoint` (string)
+
   This is the full path the API endpoint, including the protocol, port, etc.
 
   e.g.: https://yourdomain.com/api
 
 * `bridgeId` (string)
+
   The bridge ID is required to identify readings from this bridge. You can get this by creating a bridge in Renewable Energy Dashboard under "Configuration" -> "Data Collection".
 
 * `bridgeSecret` (string)
+
   The bridge secret is like the password for your bridge. This ensures only your can upload readings for your building! This is provided in Renewable Energy Dashboard under "Configuration" -> "Data Collection".
 
 ### `devicePollFrequency` (number, in seconds)
@@ -46,10 +49,19 @@ A device is not a concept known to the API. A device is a single physical device
 
 A device is an object which consists of:
 
-* `name` (string) is used for diagnostic output purposes.
-* `type` (string) is used to determine which driver to use.
-* `devicePath` (string) is the filesystem path to the serial device.
+* `name` (string)
+
+  Used for diagnostic output purposes.
+
+* `type` (string)
+
+  Used to determine which driver to use.
+
+* `devicePath` (string)
+
+  The filesystem path to the serial device.
   On Linux systems using paths in `/dev/serial/by-path/` is recommended as this identifies the device by it's USB port rather than the order is was connected.
+
 * `sensors` (array of sensor objects as defined below)
 
 #### Sensors
@@ -57,8 +69,11 @@ A device contains several sensors. Sensors must be configured in Renewable Energ
 
 Each sensor is an object consisting of:
 
-* `id` (string) is the API ID for the sensor (sensor setup in API prior to use)
-* Key fields are used to identify which sensor. These are dependent on the device so see the read me for the device you're using.
+* `id` (string)
+
+  The API ID for the sensor (sensor setup in API prior to use).
+
+* Additional fields will be required by the device to identify the sensor. Please see the read me for the device you are using for these options.
 
 ## Implementing your own device
 <!-- TODO: Link to device docs -->
