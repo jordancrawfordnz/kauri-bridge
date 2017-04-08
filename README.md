@@ -4,13 +4,13 @@ The bridge collects data from devices with sensors setup and sends this data to 
 
 A single bridge can have multiple devices, but a bridge belongs to only a single building.
 
+## [Devices](devices)
+All supported devices and how to implement your own device.
+
 ## Running the bridge
 * Install NPM on your system.
 * From the project's folder, run `npm install` to install dependencies.
 * Run `node start.js [relative path to config file]` to start the bridge.
-
-## Supported Devices
-<!-- TODO: List all the supported devices with links to their readmes. -->
 
 ## Configuration
 The configuration file is a JSON file. Below is a list of top level values that must be provided. For an example of a configuration file, see ``examples/config.json``.
@@ -75,10 +75,5 @@ Each sensor is an object consisting of:
 
 * Additional fields will be required by the device to identify the sensor. Please see the read me for the device you are using for these options.
 
-## Implementing your own device
-<!-- TODO: Link to device docs -->
-
-## Testing
-There are fake devices and a fake bridge which you can use to make development of the bridge or other parts of Renewable Energy Dashboard easier.
-
-<!-- TODO: Link to the testing docs -->
+## [Testing](testing)
+Details about the fake bridge and devices used to aide development.

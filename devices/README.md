@@ -1,8 +1,20 @@
-# Implementing your own device
+# Devices
+
+## Existing devices
+
+* **[`pentametric`](pentametric)**
+
+* **[`smartcircuit`](smartcircuit)**
+
+* **[`csvfake`](csvfake)**
+
+* **[`staticfake`](staticfake)**
+
+## Implementing your own device
 
 The bridge is built to be modular, meaning new devices can be easily added later, provided the follow to the following API.
 
-## `device.js`
+### `device.js`
 The device object follows a standard format used by all devices.
 
 The constructor takes the following parameters:
@@ -24,11 +36,11 @@ The device must implement the following methods:
     }
   ```
 
-## Device folders
+### Device folders
 A folder with the devices name should be created in `devices`. All the devices files should be defined in this folder.
 
 The device should have a `README.md` file defined which explains it's purpose and options.
 
-## Device auto-loading
+### Device auto-loading
 
 You don't need to worry about loading your device manually. Device objects are found automatically using the `type` of the device (the code which does this is in `devices.js`).
