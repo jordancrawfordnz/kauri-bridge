@@ -11,7 +11,7 @@
 		{
 			"name" : "CSV Sensor",
 			"type" : "csvfake",
-			"filePath" : "datasets/offgrid_1week_10secintervals.csv",
+			"filePath" : "test/datasets/offgrid_1week_10secintervals.csv",
 			"startingReadingIndex" : 200,
 			"sensors" : [
 				{
