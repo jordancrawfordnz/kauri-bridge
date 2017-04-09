@@ -57,11 +57,6 @@ A device is an object which consists of:
 
   Used to determine which driver to use.
 
-* `devicePath` (string)
-
-  The filesystem path to the serial device.
-  On Linux systems using paths in `/dev/serial/by-path/` is recommended as this identifies the device by it's USB port rather than the order is was connected.
-
 * `sensors` (array of sensor objects as defined below)
 
 #### Sensors
@@ -75,5 +70,5 @@ Each sensor is an object consisting of:
 
 * Additional fields will be required by the device to identify the sensor. Please see the read me for the device you are using for these options.
 
-## [Testing](testing)
+## [Testing](test)
 Details about the fake bridge and devices used to aide development.
