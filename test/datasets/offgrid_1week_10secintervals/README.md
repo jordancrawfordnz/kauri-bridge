@@ -64,6 +64,10 @@ The Smart Circuit is used to read the power consumption of the house (measured i
 
 ### Data Processing
 
+#### Processing Options
+
+* **Size of reading gaps to ignore**: 5 minutes gap.
+
 #### Battery State Options
 
 * **Critical low voltage level**: 23.1 Volts
