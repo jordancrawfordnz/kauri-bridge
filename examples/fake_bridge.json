@@ -5,11 +5,11 @@
 		"bridgeId" : "12345",
 		"bridgeSecret" : "mysecret"
 	},
-  "readingInterval": 10,
-	"sendDelay": 100,
   "fillFrom": "00:00:00 01/01/2017",
   "fillUntil": "00:00:00 01/02/2017",
-  "devices" : [
+	"readingInterval": 10,
+	"readingDelay": 100,
+	"devices" : [
 		{
 			"name" : "Static Sensor",
 			"type" : "staticfake",

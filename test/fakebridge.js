@@ -21,7 +21,7 @@ var FakeBridge = function(configurationFile) {
 
   // Read the fake bridge config.
   this.readingInterval = Configuration.current.readingInterval;
-  this.sendDelay = Configuration.current.sendDelay;
+  this.readingDelay = Configuration.current.readingDelay;
   this.fillFrom = this._parseConfigDate(Configuration.current.fillFrom);
   this.fillUntil = this._parseConfigDate(Configuration.current.fillUntil);
 
@@ -102,7 +102,7 @@ FakeBridge.prototype._makeReading = function(currentTime) {
           setTimeout(function() {
             currentTime.add(_this.readingInterval, 's');
             _this._makeReading(currentTime).then(resolve, reject);
-          }, _this.sendDelay);
+          }, _this.readingDelay);
         });
       } else {
         return Promise.resolve();
