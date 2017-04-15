@@ -1,4 +1,4 @@
-# Renewable Energy Dashboard - Bridge
+# Kauri Energy Monitor - Bridge
 
 The bridge collects data from devices with sensors setup and sends this data to the API.
 
@@ -32,11 +32,11 @@ It requires the following options:
 
 * `bridgeId` (string)
 
-  The bridge ID is required to identify readings from this bridge. You can get this by creating a bridge in Renewable Energy Dashboard under "Configuration" -> "Data Collection".
+  The bridge ID is required to identify readings from this bridge. You can get this by creating a bridge in Kauri Energy Monitor under "Configuration" -> "Data Collection".
 
 * `bridgeSecret` (string)
 
-  The bridge secret is like the password for your bridge. This ensures only your can upload readings for your building! This is provided in Renewable Energy Dashboard under "Configuration" -> "Data Collection".
+  The bridge secret is like the password for your bridge. This ensures only your can upload readings for your building! This is provided in Kauri Energy Monitor under "Configuration" -> "Data Collection".
 
 ### `devicePollFrequency` (number, in seconds)
 The device poll frequency is how often all devices will be checked for data in seconds. This should be something divisible by 60 (for consistency between bridge clients), otherwise 10 will be used.
@@ -60,7 +60,7 @@ A device is an object which consists of:
 * `sensors` (array of sensor objects as defined below)
 
 #### Sensors
-A device contains several sensors. Sensors must be configured in Renewable Energy Dashboard under "Configuration" -> "Data Collection" -> [your bridge] -> "Sensors". Here, the sensor ID is available.
+A device contains several sensors. Sensors must be configured in Kauri Energy Monitor under "Configuration" -> "Data Collection" -> [your bridge] -> "Sensors". Here, the sensor ID is available.
 
 Each sensor is an object consisting of:
 

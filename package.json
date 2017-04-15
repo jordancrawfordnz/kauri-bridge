@@ -1,7 +1,7 @@
 {
-  "name": "bridge",
+  "name": "kauri-bridge",
   "version": "1.0.0",
-  "description": "A bridge client for OffGridMonitoring.",
+  "description": "A bridge client for Kauri Energy Monitor.",
   "main": "start.js",
   "dependencies": {
     "colors": "^1.1.2",
@@ -21,9 +21,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://jordancrawfordnz@bitbucket.org/offgridmonitoring/bridge.git"
+    "url": "git+https://github.com/jordancrawfordnz/kauri-bridge"
   },
   "author": "Jordan Crawford",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/offgridmonitoring/bridge#readme"
+  "homepage": "https://github.com/jordancrawfordnz/kauri-bridge"
 }
