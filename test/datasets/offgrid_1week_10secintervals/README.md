@@ -18,6 +18,8 @@ This dataset was collected from an Offgrid System consisting of:
 * An inverter/charger with support for low voltage disconnect (LVD).
 * A solar controller.
 
+*V1 in the diagram has been excluded from the dataset as it is not used for processing.*
+
 ## Sensor Devices
 Two sensor devices are used to collect this data:
 
@@ -28,30 +30,28 @@ The `pentametric` bridge driver was used to communicate with this device.
 
 #### Sensors:
 
-* **System load current** (A1, `system_load_current` column)
+* **System load current** (A1, `system_load_current` column, **DC Current**)
 
 The current flow (in Amps) from the system to the inverter. This is negative when the system is providing energy to the inverter but positive if the inverter is charging the system.
 
-* **Solar current** (A2, `solar_current` column)
+* **Solar current** (A2, `solar_current` column, **DC Current**)
 
 The current flow (in Amps) from the solar controller to the battery. This is positive or zero. Any negative values should be ignored as sensor error.
 
-* **Solar voltage** (V1, excluded for dataset as not used for processing)
-
-The voltage of the input to the solar controller in Volts.
-
-* **Battery current** (A3, `battery_current` column)
+* **Battery current** (A3, `battery_current` column, **DC Current**)
 
 The current flow to the battery (in Amps). This is a positive value if the battery is charging.
 
-* **Battery voltage** (V2, `battery_voltage` column)
+* **Battery voltage** (V2, `battery_voltage` column, **DC Voltage**))
 
 The voltage across the terminals of the battery (in Volts). This can be used as an indication of a battery empty event.
 
 ### WattsUp Smart Circuit 20
-The Smart Circuit device is labeled as **SC** in the diagram above. This device monitors the AC electricity usage of a load connected to it.
 
-The Smart Circuit is used to read the power consumption of the house (measured in Watts) and is available in the `ac_power` column. The `smartcircuit` bridge drive was used to communicate with this device.
+The Smart Circuit device is labeled as **SC** in the diagram above. This device monitors the AC electricity usage of a load connected to it. The `smartcircuit` bridge driver was used to communicate with this device.
+
+* **Building Power** (SC, `ac_power` column, **AC Power**)
+The full power consumption of the house, including when the generator is running (measured in Watts).
 
 ## Recommended Configuration
 
