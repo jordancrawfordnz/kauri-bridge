@@ -80,9 +80,9 @@ The full power consumption of the house, including when the generator is running
 * **Battery voltage sensor**: A sensor populated with values from the `battery_voltage` column.
 * **Building power sensor**: A sensor populated with values from the `ac_power` column.
 * **Load current sensor**: A sensor populated with values from the `system_load_current` column.
+* **House consumption colour**: Renewable red
 
 #### Energy Flow Options
-**House consumption colour**: Renewable red
 
 #### Energy Sources
 
