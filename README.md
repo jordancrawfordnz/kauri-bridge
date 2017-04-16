@@ -8,9 +8,22 @@ A single bridge can have multiple devices, but a bridge belongs to only a single
 All supported devices and how to implement your own device.
 
 ## Running the bridge
-* Install NPM on your system.
-* From the project's folder, run `npm install` to install dependencies.
-* Run `node start.js [relative path to config file]` to start the bridge.
+1. [Install Node](https://nodejs.org/en/download/) on your system.
+
+2. From the project's folder, run `npm install` to install dependencies.
+
+3. Run `node start.js [relative path to config file]` to start the bridge.
+
+### Running the bridge with PM2
+[PM2](http://pm2.keymetrics.io) is a process manager for Node. When used with the bridge it restart the process if the bridge crashes, starts the bridge at boot, and lets you view the logs.
+
+1. Install PM2 with `npm install -g pm2`.
+
+2. Run `pm2 start start.js --name="Bridge" -- [config file]`.
+
+3. Run `pm2 startup` to start PM2 automatically at boot.
+
+4. Run `pm2 save` to save your current PM2 processes.
 
 ## Configuration
 The configuration file is a JSON file. Below is a list of top level values that must be provided. For an example of a configuration file, see ``examples/config.json``.
