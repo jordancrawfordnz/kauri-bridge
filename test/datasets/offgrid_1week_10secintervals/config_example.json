@@ -1,0 +1,42 @@
+{
+	"name" : "offgrid_1week_10secintervals bulk upload",
+	"apiInteraction" : {
+		"apiEndpoint" : "[server URL]/api",
+		"bridgeId" : "[bridge ID]",
+		"bridgeSecret" : "[bridge secret]"
+	},
+  "fillFrom": "00:00:00 01/01/2017",
+  "fillUntil": "00:00:00 01/02/2017",
+	"readingInterval": 10,
+	"readingDelay": 5,
+	"devices" : [
+    {
+			"name" : "CSV Sensor",
+			"type" : "csvfake",
+			"filePath" : "test/datasets/offgrid_1week_10secintervals/data.csv",
+			"startingReadingIndex" : 200,
+			"sensors" : [
+				{
+					"id" : "[System load current ID]",
+					"column" : "system_load_current"
+				},
+				{
+					"id" : "[Solar current ID]",
+					"column" : "solar_current"
+				},
+				{
+					"id" : "[Battery current ID]",
+					"column" : "battery_current"
+				},
+				{
+					"id" : "[Battery voltage ID]",
+					"column" : "battery_voltage"
+				},
+				{
+					"id" : "[Building Power ID]",
+					"column" : "ac_power"
+				}
+			]
+		}
+	]
+}

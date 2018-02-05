@@ -106,3 +106,6 @@ The full power consumption of the house, including when the generator is running
   * Is a renewable energy source: Yes
   * Chart colour: Hydro Blue
   * Prediction Type: Hourly cycle (exponential average)
+
+## [Example Fake Bridge Configuration](config_example.json)
+Just fill in the server URL, bridge ID/secret and sensor IDs to get started with this dataset quickly.
