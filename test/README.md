@@ -5,7 +5,7 @@ The fake bridge shares much of the same code as the real bridge, but rather than
 
 This is useful to test the processing capability of the API.
 
-Run the fake bridge with `node startfakebridge.js [relative to fake bridge configuration file]`.
+Run the fake bridge with `node startfakebridge.js [relative path to fake bridge configuration file]`.
 
 ### Configuration
 
