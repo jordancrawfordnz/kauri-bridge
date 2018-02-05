@@ -86,7 +86,7 @@ Each sensor is an object consisting of:
 ## Testing
 There are two approaches you can use for testing. Fake sensors (see [devices](devices) for information) can be configured to send fake data to the API. This is useful if you need to test the API's live data processing.
 
-Alternatively, you can use the fake bridge to bulk send data from a fake sensor to the API. This works great if you need a way to back populate a large amount of data into the API. See [testing](testing) for more information about this.
+Alternatively, you can use the fake bridge to bulk send data from a fake sensor to the API. This works great if you need a way to back populate a large amount of data into the API. See [testing](test) for more information about this.
 
 ## Licence
 [MIT](LICENSE)
