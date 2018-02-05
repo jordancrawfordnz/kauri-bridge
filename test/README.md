@@ -7,6 +7,8 @@ This is useful to test the processing capability of the API.
 
 Run the fake bridge with `node startfakebridge.js [relative path to fake bridge configuration file]`.
 
+**[For a full guide on using the fake bridge, see the Kauri guide about this](https://github.com/jordancrawfordnz/kauri-energy-monitor/tree/master/docs/using-fakebridge.md)**
+
 ### Configuration
 
 #### `name` (string)
