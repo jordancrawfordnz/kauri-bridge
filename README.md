@@ -1,8 +1,20 @@
-# Kauri Energy Monitor - Bridge
+# Kauri Bridge
+## What is this?
 
-The bridge collects data from devices with sensors setup and sends this data to the API.
+*Kauri Bridge is part of:*
+<br><a href="https://github.com/jordancrawfordnz/kauri-energy-monitor"><img src="resources/logo-small.png"></a>
 
-A single bridge can have multiple devices, but a bridge belongs to only a single building.
+**Kauri Energy Monitor** is a cloud-based system for monitoring your off-grid energy systems.
+
+**Kauri Bridge** communicates with your sensor devices, collects data and sends it to your Kauri server.
+
+### Features
+* Supports communication with several sensor devices on a single bridge.
+* Can handle failed network connections - keeps readings until the Kauri server is reachable.
+* Highly configurable, e.g.: can configure how often data is read and sent to Kauri.
+* Sends data to Kauri in batches to lower server and network load.
+* Can be expanded to work with additional sensor devices.
+* Can run on most hardware - you just need to be able to run NodeJS.
 
 ## [Devices](devices)
 All supported devices and how to implement your own device.
