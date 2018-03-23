@@ -3,7 +3,8 @@
 Communicates with a Bogart Engineering PentaMetric DC sensor device through the USB port.
 
 ## Supported devices
-This device has been tested with:
+This device driver has been tested with:
+
 * Bogart Engineering PentaMetric PM-5000-U
 
 ## Device Configuration
