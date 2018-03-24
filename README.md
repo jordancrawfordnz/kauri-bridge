@@ -8,6 +8,8 @@
 
 **Kauri Bridge** communicates with your sensor devices, collects data and sends it to your Kauri server.
 
+**[Read more about the development of Kauri in "Monitoring an off-grid system with Kauri"](https://jordancrawford.kiwi/kauri-energy-monitor/)**
+
 ### Features
 * Supports communication with several sensor devices on a single bridge.
 * Can handle failed network connections - keeps readings until the Kauri server is reachable.
