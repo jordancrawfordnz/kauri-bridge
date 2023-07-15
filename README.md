@@ -1,4 +1,11 @@
 # Kauri Bridge
+
+---
+
+**Please note:** This project is not actively maintained, it may no longer work and may depend on out of date dependencies.
+
+---
+
 ## What is this?
 
 *Kauri Bridge is part of:*
@@ -8,7 +15,7 @@
 
 **Kauri Bridge** communicates with your sensor devices, collects data and sends it to your Kauri server.
 
-**[Read more about the development of Kauri in "Monitoring an off-grid system with Kauri"](https://jordancrawford.kiwi/kauri-energy-monitor/)**
+**[Read more about the development of Kauri in "Monitoring an off-grid system with Kauri"](https://jc.kiwi/kauri-energy-monitor/)**
 
 ### Features
 * Supports communication with several sensor devices on a single bridge.
